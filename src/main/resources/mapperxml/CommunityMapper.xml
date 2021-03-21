@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.CommunityMapper">
+  <resultMap id="BaseResultMap" type="com.domain.Community">
+    <!--@mbg.generated-->
+    <!--@Table community-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="cno" jdbcType="VARCHAR" property="cno" />
+    <result column="community_name" jdbcType="VARCHAR" property="communityName" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+    <result column="area_covered" jdbcType="DOUBLE" property="areaCovered" />
+    <result column="floorage" jdbcType="DOUBLE" property="floorage" />
+    <result column="area_public" jdbcType="DOUBLE" property="areaPublic" />
+    <result column="area_afforested" jdbcType="DOUBLE" property="areaAfforested" />
+    <result column="buildings" jdbcType="INTEGER" property="buildings" />
+    <result column="customer_service_phone" jdbcType="VARCHAR" property="customerServicePhone" />
+    <result column="person_in_charge_name" jdbcType="VARCHAR" property="personInChargeName" />
+    <result column="person_in_charge_phone" jdbcType="VARCHAR" property="personInChargePhone" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="background_image_url" jdbcType="VARCHAR" property="backgroundImageUrl" />
+    <result column="logo_url" jdbcType="VARCHAR" property="logoUrl" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, cno, community_name, region, address_detail, area_covered, floorage, area_public, 
+    area_afforested, buildings, customer_service_phone, person_in_charge_name, person_in_charge_phone, 
+    remark, background_image_url, logo_url, deleted, gmt_create, gmt_modified
+  </sql>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.OwnerHouseMapper">
+  <resultMap id="BaseResultMap" type="com.domain.OwnerHouse">
+    <!--@mbg.generated-->
+    <!--@Table owner_house-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="owner_id" jdbcType="BIGINT" property="ownerId" />
+    <result column="house_id" jdbcType="BIGINT" property="houseId" />
+    <result column="type_of_residence" jdbcType="INTEGER" property="typeOfResidence" />
+    <result column="move_in_reason" jdbcType="VARCHAR" property="moveInReason" />
+    <result column="move_in_time" jdbcType="TIMESTAMP" property="moveInTime" />
+    <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, owner_id, house_id, type_of_residence, move_in_reason, move_in_time, delivery_time, 
+    deleted, gmt_create, gmt_modified
+  </sql>
+</mapper>

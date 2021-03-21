@@ -1,0 +1,12 @@
+server:
+  port: 9005
+spring:
+  profiles:
+    active: dev
+  application:
+    name: vote-system-demo
+
+static-res:
+  port: 9006
+
+server-ip: 121.196.145.171

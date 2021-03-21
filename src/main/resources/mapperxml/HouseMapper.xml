@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.HouseMapper">
+  <resultMap id="BaseResultMap" type="com.domain.House">
+    <!--@mbg.generated-->
+    <!--@Table house-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="hno" jdbcType="VARCHAR" property="hno" />
+    <result column="house_number" jdbcType="VARCHAR" property="houseNumber" />
+    <result column="area_house" jdbcType="DOUBLE" property="areaHouse" />
+    <result column="floor" jdbcType="INTEGER" property="floor" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="term_of_property_right" jdbcType="VARCHAR" property="termOfPropertyRight" />
+    <result column="vote_weight" jdbcType="INTEGER" property="voteWeight" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, hno, house_number, area_house, `floor`, `type`, term_of_property_right, vote_weight, 
+    remark, deleted, gmt_create, gmt_modified
+  </sql>
+</mapper>
