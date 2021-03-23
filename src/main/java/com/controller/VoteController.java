@@ -1,11 +1,13 @@
 package com.controller;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.domain.Result;
 import com.domain.Vote;
 import com.domain.VoteCandidate;
 import com.service.VoteService;
 import com.utils.ResultUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,12 @@ public class VoteController {
     public Result create(@RequestBody Map<String,Object> map) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try{
+            Map<String, JSONArray> jsonArrayMap = new HashMap<>();
+            jsonArrayMap.put("range", JSONArray.parseArray(JSONObject.toJSONString(map.get("range"))));
+            String noticedIDs = voteService.getNoticedIDs(JSONObject.toJSONString(jsonArrayMap));
+            if (!StringUtils.isNotEmpty(noticedIDs)){
+                return ResultUtil.error("投票范围不能为空");
+            }
             Vote vote = Vote.builder()
                     .creatorId(Long.parseLong(map.get("id").toString()))
                     .title(map.get("title").toString())
@@ -38,27 +46,22 @@ public class VoteController {
                     .whetherAnonym(Boolean.parseBoolean(map.get("anonym").toString()))
                     .whetherReplaceByRelatives(Boolean.parseBoolean(map.get("relatives").toString()))
                     .whetherDraft(Boolean.parseBoolean(map.get("draft").toString()))
+                    .ownerNoticedIds(noticedIDs)
                     .build();
 
             List<Map<String,Object>> candidateList = (ArrayList<Map<String,Object>>)map.get("candidate");
             List<VoteCandidate> voteCandidateList = new ArrayList<>();
             for (Map<String,Object> candidateMap : candidateList){
                 List<String> urlList = (ArrayList<String>)candidateMap.get("url");
-                String picUrls = "";
-                for (String url:urlList){
-                    picUrls += url + "$$";
-                }
-                picUrls = picUrls.substring(0,picUrls.length()-2);
 
                 VoteCandidate voteCandidate = VoteCandidate.builder()
                         .candidateName(candidateMap.get("canName").toString())
                         .introduce(candidateMap.get("canInfo").toString())
-                        .picUrls(picUrls)
+                        .picUrls(StringUtils.join(urlList,"$$"))
                         .build();
                 voteCandidateList.add(voteCandidate);
             }
-            System.out.println(map.get("range").toString());
-            vote.setOwnerNoticedIds("先随便来一串吧");
+
             Integer result = voteService.createVote(vote,voteCandidateList);
             if (result > 0){
                 return ResultUtil.success("创建成功");
