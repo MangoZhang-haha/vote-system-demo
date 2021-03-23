@@ -8,8 +8,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.domain.Vote;
 import com.mapper.VoteMapper;
 import com.service.VoteService;
+
 @Service
-public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements VoteService{
+public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements VoteService {
 
     @Autowired
     private VoteMapper voteMapper;
@@ -19,3 +20,4 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
         return voteMapper.getInfo();
     }
 }
+
