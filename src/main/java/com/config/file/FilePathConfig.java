@@ -21,6 +21,9 @@ public class FilePathConfig {
     @Value("${file.avatar}")
     public String avatarPath;
 
+    @Value("${file.tmp}")
+    public String tmpPath;
+
     @PostConstruct
     public void init() {
         log.info("************** 文件目录初始化开始 **************");
@@ -55,6 +58,22 @@ public class FilePathConfig {
             }
         } else {
             log.info(avatar.getAbsolutePath() + "已经存在");
+        }
+
+        //临时文件
+        File tmp = new File(tmpPath);
+        if (!tmp.exists()) {
+            boolean flag = tmp.mkdirs();
+            if (flag) {
+                tmp.setExecutable(true);
+                tmp.setReadable(true);
+                tmp.setWritable(true);
+                log.info(tmp.getAbsolutePath() + "创建成功");
+            } else {
+                log.error(tmp.getAbsolutePath() + "创建失败");
+            }
+        } else {
+            log.info(tmp.getAbsolutePath() + "已经存在");
         }
 
         log.info("************** 文件目录初始化结束 **************");

@@ -12,8 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-@ApiModel(value="com-domain-Vote")
+@ApiModel(value="投票表单的记录")
 @Data
 @Builder
 @AllArgsConstructor
@@ -60,6 +61,7 @@ public class Vote implements Serializable {
      */
     @TableField(value = "start_time")
     @ApiModelProperty(value="开始时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
 
     /**
@@ -67,6 +69,7 @@ public class Vote implements Serializable {
      */
     @TableField(value = "end_time")
     @ApiModelProperty(value="结束时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /**

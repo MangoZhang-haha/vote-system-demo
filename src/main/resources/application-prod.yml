@@ -29,3 +29,4 @@ mybatis-plus:
 file:
   root: /static_res/${spring.application.name}
   avatar: ${file.root}/avatar/
+  tmp: ${file.root}/tmp/
