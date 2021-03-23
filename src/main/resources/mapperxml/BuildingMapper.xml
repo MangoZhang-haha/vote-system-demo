@@ -18,4 +18,26 @@
     <!--@mbg.generated-->
     id, bno, building_name, `type`, units, remark, deleted, gmt_create, gmt_modified
   </sql>
+
+    <select id="countOwnerNumbers" resultType="java.lang.Integer">
+        SELECT
+            COUNT( 1 )
+        FROM
+            building
+            INNER JOIN unit ON building.id = unit.building_id
+            INNER JOIN unit_house ON unit.id = unit_house.unit_table_id
+            INNER JOIN house ON unit_house.house_id = house.id
+            INNER JOIN owner_house ON house.id = owner_house.house_id
+            INNER JOIN `owner` ON owner_house.owner_id = `owner`.id
+        WHERE
+            building.id = #{buildingID,jdbcType=BIGINT}
+
+            AND `owner`.oid = 0
+            AND building.deleted = 0
+            AND unit.deleted = 0
+            AND unit_house.deleted = 0
+            AND house.deleted = 0
+            AND owner_house.deleted = 0
+            AND `owner`.deleted = 0
+    </select>
 </mapper>

@@ -30,4 +30,29 @@
     area_afforested, buildings, customer_service_phone, person_in_charge_name, person_in_charge_phone, 
     remark, background_image_url, logo_url, deleted, gmt_create, gmt_modified
   </sql>
+
+    <select id="countOwnerNumbers" resultType="java.lang.Integer">
+        SELECT
+            COUNT( 1 )
+        FROM
+            community
+            INNER JOIN community_building ON community.id = community_building.community_id
+            INNER JOIN building ON community_building.building_id = building.id
+            INNER JOIN unit ON building.id = unit.building_id
+            INNER JOIN unit_house ON unit.id = unit_house.unit_table_id
+            INNER JOIN house ON unit_house.house_id = house.id
+            INNER JOIN owner_house ON house.id = owner_house.house_id
+            INNER JOIN `owner` ON owner_house.owner_id = `owner`.id
+        WHERE
+            community.id = #{communityID,jdbcType=BIGINT}
+            AND `owner`.oid = 0
+            AND community.deleted = 0
+            AND community_building.deleted = 0
+            AND building.deleted = 0
+            AND unit.deleted = 0
+            AND unit_house.deleted = 0
+            AND house.deleted = 0
+            AND owner_house.deleted = 0
+            AND `owner`.deleted = 0
+    </select>
 </mapper>
