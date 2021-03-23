@@ -99,7 +99,6 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
                 }
             });
         }
-        return;
     }
 }
 
