@@ -17,4 +17,27 @@
     <!--@mbg.generated-->
     id, vote_id, candidate_name, introduce, pic_urls, deleted, gmt_create, gmt_modified
   </sql>
+
+  <insert id="insertList">
+      insert into vote_candidate
+          (
+            vote_id,
+            candidate_name,
+            introduce,
+            pic_urls,
+            gmt_create,
+            gmt_modified
+          )
+      values
+          <foreach collection="list" index="index" item="candidate" separator=",">
+            (
+                #{candidate.voteId,jdbcType=BIGINT},
+                #{candidate.candidateName,jdbcType=VARCHAR},
+                #{candidate.introduce,jdbcType=VARCHAR},
+                #{candidate.picUrls,jdbcType=VARCHAR},
+                #{now,jdbcType=TIMESTAMP},
+                #{now,jdbcType=TIMESTAMP}
+            )
+      </foreach>
+  </insert>
 </mapper>
