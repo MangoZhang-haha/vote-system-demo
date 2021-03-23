@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface VoteService extends IService<Vote> {
 
-    List<Long> getNoticedIDs(String json);
+    String getNoticedIDs(String json);
 
     @Transactional(rollbackFor = Exception.class)
     Integer createVote(Vote vote , List<VoteCandidate> candidateList);

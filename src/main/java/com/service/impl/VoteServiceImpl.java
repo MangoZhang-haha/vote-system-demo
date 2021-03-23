@@ -1,10 +1,13 @@
 package com.service.impl;
 
+import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.domain.VoteCandidate;
 import com.mapper.VoteCandidateMapper;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -25,7 +28,7 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
     private VoteCandidateMapper voteCandidateMapper;
 
     @Override
-    public List<Long> getNoticedIDs(String json) {
+    public String getNoticedIDs(String json) {
         List<Long> ownerIDs = new ArrayList<>();
         JSONObject jsonObject = JSONObject.parseObject(json);
         JSONArray array = JSONObject.parseArray(JSON.toJSONString(jsonObject.get("range")));
@@ -33,7 +36,7 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
             JSONObject communityInfo = JSONObject.parseObject(community.toString());
             calCommunity(communityInfo, ownerIDs);
         });
-        return ownerIDs;
+        return StringUtils.join(ownerIDs, ",");
     }
 
     @Override
