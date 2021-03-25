@@ -20,6 +20,7 @@
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
     <result column="role_type" jdbcType="INTEGER" property="roleType" />
+    <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
@@ -28,6 +29,6 @@
     <!--@mbg.generated-->
     id, oid, face_id, owner_name, gender, mobilephone, telephone, account_type, bank_cards, 
     lastest_login_time, login_times, qq_number, wechat_number, email, id_number, role_type, 
-    deleted, gmt_create, gmt_modified
+    avatar_url, deleted, gmt_create, gmt_modified
   </sql>
 </mapper>

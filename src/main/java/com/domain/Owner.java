@@ -132,6 +132,13 @@ public class Owner implements Serializable {
     @ApiModelProperty(value = "角色类型（1 业主 2 业主委员）")
     private Integer roleType;
 
+    /**
+     * 头像地址
+     */
+    @TableField(value = "avatar_url")
+    @ApiModelProperty(value = "头像地址")
+    private String avatarUrl;
+
     @TableField(value = "deleted")
     @ApiModelProperty(value = "")
     private Boolean deleted;
@@ -177,6 +184,8 @@ public class Owner implements Serializable {
     public static final String COL_ID_NUMBER = "id_number";
 
     public static final String COL_ROLE_TYPE = "role_type";
+
+    public static final String COL_AVATAR_URL = "avatar_url";
 
     public static final String COL_DELETED = "deleted";
 

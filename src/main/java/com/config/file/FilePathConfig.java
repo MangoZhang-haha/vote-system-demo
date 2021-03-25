@@ -24,6 +24,9 @@ public class FilePathConfig {
     @Value("${file.tmp}")
     public String tmpPath;
 
+    @Value("${file.document}")
+    public String documentPath;
+
     @PostConstruct
     public void init() {
         log.info("************** 文件目录初始化开始 **************");
@@ -74,6 +77,22 @@ public class FilePathConfig {
             }
         } else {
             log.info(tmp.getAbsolutePath() + "已经存在");
+        }
+
+        //正式存储文件
+        File document = new File(documentPath);
+        if (!document.exists()) {
+            boolean flag = document.mkdirs();
+            if (flag) {
+                document.setExecutable(true);
+                document.setReadable(true);
+                document.setWritable(true);
+                log.info(document.getAbsolutePath() + "创建成功");
+            } else {
+                log.error(document.getAbsolutePath() + "创建失败");
+            }
+        } else {
+            log.info(document.getAbsolutePath() + "已经存在");
         }
 
         log.info("************** 文件目录初始化结束 **************");

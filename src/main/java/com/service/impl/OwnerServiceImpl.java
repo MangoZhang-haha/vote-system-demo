@@ -2,6 +2,7 @@ package com.service.impl;
 
 import com.pojo.OwnerInfo;
 import com.pojo.mapper.OwnerInfoMapper;
+import com.service.PublicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,6 +19,9 @@ public class OwnerServiceImpl extends ServiceImpl<OwnerMapper, Owner> implements
     @Autowired
     private OwnerMapper ownerMapper;
 
+    @Autowired
+    private PublicService publicService;
+
     @Override
     public OwnerInfo getOwnerInfoByOwnerID(Long ownerID) {
         OwnerInfo ownerInfo = ownerInfoMapper.queryOwnerInfoByOwnerID(ownerID);
@@ -27,9 +31,11 @@ public class OwnerServiceImpl extends ServiceImpl<OwnerMapper, Owner> implements
 
         ownerInfo.setWhetherAuth(ownerInfo.getFaceID() == null ? false : true);
         ownerInfo.setFaceID(null);
+        ownerInfo.setAvatarUrl(publicService.getStaticResPrefixUrl() + ownerInfo.getAvatarUrl());
         return ownerInfo;
     }
 }
+
 
 
 

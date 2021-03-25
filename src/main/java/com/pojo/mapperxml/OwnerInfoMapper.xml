@@ -14,7 +14,8 @@
             community.id AS communityID,
             community.community_name AS communityName,
             `owner`.role_type AS roleType,
-            `owner`.face_id AS faceID
+            `owner`.face_id AS faceID,
+            `owner`.avatar_url AS avatarUrl
         FROM
             `owner`
             INNER JOIN owner_house ON `owner`.id = owner_house.owner_id
@@ -26,5 +27,6 @@
             INNER JOIN community ON community_building.community_id = community.id
         WHERE
             `owner`.id = #{ownerID,jdbcType=BIGINT}
+            and `owner`.deleted = 0
     </select>
 </mapper>

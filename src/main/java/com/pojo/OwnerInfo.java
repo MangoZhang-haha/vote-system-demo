@@ -15,6 +15,9 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ * 业主委员会 页面（主页）
+ */
 public class OwnerInfo implements Serializable {
 
     private static final long serialVersionUID = -5401824181897550363L;
@@ -46,4 +49,6 @@ public class OwnerInfo implements Serializable {
     private String faceID;
 
     private Boolean whetherAuth;
+
+    private String avatarUrl;
 }

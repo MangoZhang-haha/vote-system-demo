@@ -101,18 +101,30 @@ public class Vote implements Serializable {
     @ApiModelProperty(value = "被通知的业主的id（以 ',' 分割）")
     private String ownerNoticedIds;
 
+    /**
+     * 访问量
+     */
+    @TableField(value = "visit_num")
+    @ApiModelProperty(value = "访问量")
+    private Long visitNum;
+
     @TableField(value = "deleted")
     @ApiModelProperty(value = "")
-    @TableLogic
     private Boolean deleted;
 
-    @TableField(value = "gmt_create")
+    @TableField(value = "gmt_create", fill = FieldFill.INSERT)
     @ApiModelProperty(value = "")
     private Date gmtCreate;
 
-    @TableField(value = "gmt_modified")
+    @TableField(value = "gmt_modified", fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "")
     private Date gmtModified;
+
+    /**
+     * 投票的数量
+     */
+    @TableField(exist = false)
+    private Integer voteNumbers;
 
     private static final long serialVersionUID = 1L;
 
@@ -139,6 +151,8 @@ public class Vote implements Serializable {
     public static final String COL_WHETHER_DRAFT = "whether_draft";
 
     public static final String COL_OWNER_NOTICED_IDS = "owner_noticed_ids";
+
+    public static final String COL_VISIT_NUM = "visit_num";
 
     public static final String COL_DELETED = "deleted";
 

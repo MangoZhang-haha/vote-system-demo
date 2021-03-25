@@ -16,6 +16,7 @@
     <result column="whether_replace_by_relatives" jdbcType="BIT" property="whetherReplaceByRelatives" />
     <result column="whether_draft" jdbcType="BIT" property="whetherDraft" />
     <result column="owner_noticed_ids" jdbcType="LONGVARCHAR" property="ownerNoticedIds" />
+    <result column="visit_num" jdbcType="BIGINT" property="visitNum" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
@@ -23,8 +24,8 @@
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, creator_id, title, introduce, vote_limit_id, vote_type_id, start_time, end_time, 
-    whether_anonym, whether_replace_by_relatives, whether_draft, owner_noticed_ids, deleted, 
-    gmt_create, gmt_modified
+    whether_anonym, whether_replace_by_relatives, whether_draft, owner_noticed_ids, visit_num, 
+    deleted, gmt_create, gmt_modified
   </sql>
 
 </mapper>

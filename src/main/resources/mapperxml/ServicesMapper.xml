@@ -6,7 +6,7 @@
     <!--@Table services-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
-    <result column="icon__url" jdbcType="VARCHAR" property="iconUrl" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
     <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
@@ -14,6 +14,6 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, service_name, icon__url, creator_id, deleted, gmt_create, gmt_modified
+    id, service_name, icon_url, creator_id, deleted, gmt_create, gmt_modified
   </sql>
 </mapper>

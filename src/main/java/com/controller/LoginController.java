@@ -8,6 +8,9 @@ import com.domain.Owner;
 import com.domain.Result;
 import com.service.OwnerService;
 import com.utils.ResultUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +24,16 @@ import java.util.Date;
  * @Date: 2021/3/20 14:33:00
  */
 @RestController
+@Api(tags = "登陆控制器")
 public class LoginController {
 
     @Autowired
     private OwnerService ownerService;
 
+    @ApiOperation("用户登陆")
     @GetMapping("/login")
-    public Result login(@RequestParam("loginAccount") String loginAccount,
-                        @RequestParam("faceID") String faceID) {
+    public Result login(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号|用户姓名）") String loginAccount,
+                        @RequestParam("faceID") @ApiParam("人脸标识") String faceID) {
         Integer type = null;
         if (PhoneUtil.isMobile(loginAccount)) {
             type = 1;

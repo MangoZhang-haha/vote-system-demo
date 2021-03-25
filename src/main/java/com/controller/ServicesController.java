@@ -5,6 +5,8 @@ import com.domain.Services;
 import com.service.PublicService;
 import com.service.ServicesService;
 import com.utils.ResultUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/services")
+@Api(tags = "小区服务控制器")
 public class ServicesController {
 
     @Autowired
@@ -26,6 +29,7 @@ public class ServicesController {
     @Autowired
     private PublicService publicService;
 
+    @ApiOperation("获取所有的小区服务")
     @GetMapping
     public Result getAll() {
         String prefix = publicService.getStaticResPrefixUrl();

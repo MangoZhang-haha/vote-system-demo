@@ -3,8 +3,12 @@ package com.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.domain.VoteCandidate;
+import com.domain.VoteRecords;
 import com.mapper.VoteCandidateMapper;
+import com.mapper.VoteRecordsMapper;
+import com.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,9 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
     @Autowired
     private VoteCandidateMapper voteCandidateMapper;
 
+    @Autowired
+    private VoteRecordsMapper voteRecordsMapper;
+
     @Override
     public String getNoticedIDs(String json) {
         List<Long> ownerIDs = new ArrayList<>();
@@ -39,10 +46,27 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
     @Override
     public Integer createVote(Vote vote, List<VoteCandidate> candidateList) {
         voteMapper.insert(vote);
-        for (VoteCandidate candidate : candidateList){
+        for (VoteCandidate candidate : candidateList) {
             candidate.setVoteId(vote.getId());
+            candidate.setPicUrls(FileUtils.moveToDocument(candidate.getPicUrls()));
         }
-        return voteCandidateMapper.insertList(candidateList,new Date());
+        return voteCandidateMapper.insertList(candidateList, new Date());
+    }
+
+    @Override
+    public Integer deleteVote(Long voteID) {
+        voteMapper.deleteById(voteID);
+
+        voteCandidateMapper.delete(
+                Wrappers.lambdaQuery(VoteCandidate.class)
+                        .eq(VoteCandidate::getVoteId, voteID)
+        );
+
+        voteRecordsMapper.delete(
+                Wrappers.lambdaQuery(VoteRecords.class)
+                        .eq(VoteRecords::getVoteId, voteID)
+        );
+        return 1;
     }
 
     public void calCommunity(JSONObject jsonObject, List<Long> ownerIDs) {
@@ -101,4 +125,5 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
         }
     }
 }
+
 

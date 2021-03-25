@@ -25,7 +25,7 @@ import java.util.UUID;
 @Api(tags = "文件上传控制器")
 public class FileController {
 
-    @ApiOperation("上传零时文件，返回文件路径")
+    @ApiOperation("上传临时文件，返回文件路径")
     @PostMapping("/tmpUpload")
     public Result tmpUpload(@RequestParam(value = "file", required = false) @ApiParam("file") MultipartFile multipartFile) throws IOException {
         if (multipartFile == null) {
@@ -39,7 +39,7 @@ public class FileController {
         }
     }
 
-    @ApiOperation("删除零时文件")
+    @ApiOperation("删除临时文件")
     @DeleteMapping("/tmpDelete")
     public Result tmpDelete(@RequestParam("path") @ApiParam("path") String path) {
         FileUtils.deleteTmp(path);

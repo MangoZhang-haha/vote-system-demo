@@ -30,3 +30,4 @@ file:
   root: C:\static_res\${spring.application.name}
   avatar: ${file.root}\avatar\
   tmp: ${file.root}\tmp\
+  document: ${file.root}\document\
