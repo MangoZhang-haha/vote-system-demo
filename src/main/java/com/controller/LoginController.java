@@ -7,17 +7,26 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.domain.Owner;
 import com.domain.Result;
 import com.service.OwnerService;
+import com.utils.FileUtils;
 import com.utils.ResultUtil;
+import com.utils.alibaba.face.FaceUtil;
+import com.utils.alibaba.face.OSSClientUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Mango
@@ -27,13 +36,25 @@ import java.util.Date;
 @Api(tags = "登陆控制器")
 public class LoginController {
 
+    @Value("${alibaba.face.default-db-name}")
+    private String defaultDbName;
+
     @Autowired
     private OwnerService ownerService;
+
+    @Autowired
+    private FaceUtil faceUtil;
+
+    @Autowired
+    private OSSClientUtil ossClientUtil;
 
     @ApiOperation("用户登陆")
     @GetMapping("/login")
     public Result login(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号|用户姓名）") String loginAccount,
-                        @RequestParam("faceID") @ApiParam("人脸标识") String faceID) {
+                        @RequestParam(value = "facePicFile", required = false) @ApiParam("人脸图片文件") MultipartFile multipartFile) throws IOException {
+        if (multipartFile == null || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
+            return ResultUtil.error("请选择文件上传");
+        }
         Integer type = null;
         if (PhoneUtil.isMobile(loginAccount)) {
             type = 1;
@@ -67,7 +88,17 @@ public class LoginController {
                 break;
         }
         if (owner != null) {
-            if (faceID.equals(owner.getFaceId())) {
+            String url = FileUtils.uploadTmp(multipartFile);
+            System.out.println("url = " + url);
+            url = "http://82.156.199.7/res" + url;
+            String fileName = url.substring(url.lastIndexOf(File.separator) + 1);
+            String ossFileUrl = ossClientUtil.uploadWebFile(url, fileName);
+            Boolean haveFace = faceUtil.DetectFace(ossFileUrl);
+            if (!haveFace) {
+                return ResultUtil.success("照片中没找到人脸");
+            }
+            List<String> faceIDs = faceUtil.searchFace(defaultDbName, ossFileUrl);
+            if (faceIDs.contains(owner.getFaceId())) {
                 Long times = owner.getLoginTimes();
                 times++;
                 ownerService.update(

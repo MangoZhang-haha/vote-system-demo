@@ -14,3 +14,17 @@ static-res:
   port: 9006
 
 server-ip: 121.196.145.171
+
+alibaba:
+  face:
+    access-key-id: LTAI4G2g7tsypRyNFCYGVNuz
+    access-key-secret: uhUqUntAC23ENC2dRm0CavtNCkrPCK
+    region-id: cn-shanghai
+    bucket-name: face-test-mango-shanghai
+    access-url: face-test-mango-shanghai.oss-cn-shanghai.aliyuncs.com
+    endpoint: http://oss-cn-shanghai.aliyuncs.com
+    default-db-name: default
+
+face-verify:
+  #小程序人脸识别模块是否展示
+  is-show: false
