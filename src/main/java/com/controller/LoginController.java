@@ -17,10 +17,7 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -49,7 +46,7 @@ public class LoginController {
     private OSSClientUtil ossClientUtil;
 
     @ApiOperation("用户登陆")
-    @GetMapping("/login")
+    @PostMapping("/login")
     public Result login(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号|用户姓名）") String loginAccount,
                         @RequestParam(value = "facePicFile", required = false) @ApiParam("人脸图片文件") MultipartFile multipartFile) throws IOException {
         if (multipartFile == null || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
