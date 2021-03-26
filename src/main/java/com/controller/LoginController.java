@@ -47,7 +47,7 @@ public class LoginController {
 
     @ApiOperation("用户登陆")
     @PostMapping("/login")
-    public Result login(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号|用户姓名）") String loginAccount,
+    public Result login(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号）") String loginAccount,
                         @RequestParam(value = "facePicFile", required = false) @ApiParam("人脸图片文件") MultipartFile multipartFile) throws IOException {
         if (multipartFile == null || StringUtils.isEmpty(multipartFile.getOriginalFilename())) {
             return ResultUtil.error("请选择文件上传");
@@ -58,27 +58,20 @@ public class LoginController {
         } else if (IdcardUtil.isValidCard18(loginAccount)) {
             type = 2;
         } else {
-            type = 3;
+            return ResultUtil.error("登陆账号只能为手机号和身份证号");
         }
-
         Owner owner = null;
         switch (type) {
             case 1:
-                 owner = ownerService.getOne(
-                         Wrappers.lambdaQuery(Owner.class)
-                                 .eq(Owner::getMobilephone, loginAccount)
-                 );
+                owner = ownerService.getOne(
+                        Wrappers.lambdaQuery(Owner.class)
+                                .eq(Owner::getMobilephone, loginAccount)
+                );
                 break;
             case 2:
                 owner = ownerService.getOne(
                         Wrappers.lambdaQuery(Owner.class)
                                 .eq(Owner::getIdNumber, loginAccount)
-                );
-                break;
-            case 3:
-                owner = ownerService.getOne(
-                    Wrappers.lambdaQuery(Owner.class)
-                            .eq(Owner::getOwnerName, loginAccount)
                 );
                 break;
             default:
@@ -108,6 +101,43 @@ public class LoginController {
             } else {
                 return ResultUtil.error("人脸不匹配");
             }
+        } else {
+            return ResultUtil.error("该账户不存在");
+        }
+    }
+
+    @ApiOperation("检查用户账号是否存在")
+    @GetMapping("/checkAccount")
+    public Result checkAccount(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号）") String loginAccount) {
+        Integer type = null;
+        if (PhoneUtil.isMobile(loginAccount)) {
+            type = 1;
+        } else if (IdcardUtil.isValidCard18(loginAccount)) {
+            type = 2;
+        } else {
+            return ResultUtil.error("登陆账号只能为手机号和身份证号");
+        }
+
+        Owner owner = null;
+        switch (type) {
+            case 1:
+                owner = ownerService.getOne(
+                        Wrappers.lambdaQuery(Owner.class)
+                                .eq(Owner::getMobilephone, loginAccount)
+                );
+                break;
+            case 2:
+                owner = ownerService.getOne(
+                        Wrappers.lambdaQuery(Owner.class)
+                                .eq(Owner::getIdNumber, loginAccount)
+                );
+                break;
+            default:
+                break;
+        }
+
+        if (owner != null) {
+            return ResultUtil.success("该用户存在");
         } else {
             return ResultUtil.error("该账户不存在");
         }
