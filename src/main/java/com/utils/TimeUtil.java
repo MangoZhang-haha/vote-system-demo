@@ -2,6 +2,7 @@ package com.utils;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,5 +20,14 @@ public class TimeUtil {
 
     public static String defaultFormatTime() {
         return formatTime("yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static Date getTimeStamp(String timeStr, String pattern) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.parse(timeStr);
+    }
+
+    public static Date getDefaultTimeStamp(String timeStr) throws ParseException {
+        return getTimeStamp(timeStr, "yyyy-MM-dd HH:mm:ss");
     }
 }

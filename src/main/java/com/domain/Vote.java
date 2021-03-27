@@ -102,6 +102,13 @@ public class Vote implements Serializable {
     private String ownerNoticedIds;
 
     /**
+     * 投票是否截止
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "投票是否截止")
+    private Boolean endOrNot;
+
+    /**
      * 访问量
      */
     @TableField(value = "visit_num")

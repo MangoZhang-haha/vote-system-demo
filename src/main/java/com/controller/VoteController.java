@@ -122,12 +122,15 @@ public class VoteController {
                         )
                         .orderByDesc(Vote::getGmtCreate)
         );
+        Date now = new Date();
         list.forEach(vote -> {
             Integer count = voteRecordsService.count(
                     Wrappers.lambdaQuery(VoteRecords.class)
                             .eq(VoteRecords::getVoteId, vote.getId())
             );
             vote.setVoteNumbers(count);
+
+            vote.setEndOrNot(vote.getEndTime().getTime() < now.getTime());
         });
         return ResultUtil.success(list);
     }
