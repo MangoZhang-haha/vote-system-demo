@@ -11,9 +11,12 @@ spring:
       max-file-size: 10MB
 
 static-res:
-  port: 9006
+#  port: 9006
+  port: 8999
+  suffix: res
 
-server-ip: 121.196.145.171
+#server-ip: 121.196.145.171
+server-ip: 82.156.199.7
 
 alibaba:
   face:

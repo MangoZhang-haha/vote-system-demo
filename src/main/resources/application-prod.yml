@@ -27,7 +27,7 @@ mybatis-plus:
     - com.pojo
 
 file:
-  root: /static_res/${spring.application.name}
+  root: /res/${spring.application.name}
   avatar: ${file.root}/avatar/
   tmp: ${file.root}/tmp/
   document: ${file.root}/document/

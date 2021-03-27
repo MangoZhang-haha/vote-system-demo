@@ -33,7 +33,7 @@ public class FileTask {
     //每十分钟
 //    @Scheduled(cron = "0 */10 * * * ?")
     //每十二小时
-//    @Scheduled(cron = "0 0 */12 * * ?")
+    @Scheduled(cron = "0 0 */12 * * ?")
     public void deleteTmp() {
         Date now = new Date();
         File tmpFolder = new File(TMP_PATH);

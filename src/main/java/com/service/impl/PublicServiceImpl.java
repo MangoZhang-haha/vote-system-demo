@@ -17,8 +17,11 @@ public class PublicServiceImpl implements PublicService {
     @Value("${server-ip}")
     private String serverIp;
 
+    @Value("${static-res.suffix}")
+    private String suffix;
+
     @Override
     public String getStaticResPrefixUrl() {
-        return "http://" + serverIp + ":" + port;
+        return "http://" + serverIp + "/" + suffix;
     }
 }
