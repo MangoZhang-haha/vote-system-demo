@@ -80,9 +80,10 @@ public class LoginController {
         if (owner != null) {
             String url = FileUtils.uploadTmp(multipartFile);
             System.out.println("url = " + url);
-            url = "http://82.156.199.7/res" + url;
+            url = "https://www.hah-mango.com/res" + url;
             String fileName = url.substring(url.lastIndexOf(File.separator) + 1);
             String ossFileUrl = ossClientUtil.uploadWebFile(url, fileName);
+            System.out.println("ossFileUrl = " + ossFileUrl);
             Boolean haveFace = faceUtil.DetectFace(ossFileUrl);
             if (!haveFace) {
                 return ResultUtil.success("照片中没找到人脸");
