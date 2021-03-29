@@ -1,12 +1,15 @@
 package com.schedule;
 
 import com.utils.TimeUtil;
+import com.utils.alibaba.face.OSSClientUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Mango
@@ -14,6 +17,9 @@ import java.util.Date;
  */
 @Component
 public class FileTask {
+
+    @Autowired
+    private OSSClientUtil ossClientUtil;
 
     /**
      * 最长未操作时间 30分钟
@@ -28,11 +34,8 @@ public class FileTask {
 
     /**
      * 定时删除tmp里面的文件
-     *
+     * 每十二小时
      */
-    //每十分钟
-//    @Scheduled(cron = "0 */10 * * * ?")
-    //每十二小时
     @Scheduled(cron = "0 0 */12 * * ?")
     public void deleteTmp() {
         Date now = new Date();
@@ -42,6 +45,18 @@ public class FileTask {
             if (now.getTime() - files[i].lastModified() > MAX_NO_OPERATION_TIME) {
                 files[i].delete();
             }
+        }
+    }
+
+    /**
+     * 定时删除OSS中的文件
+     * 每十二小时
+     */
+    @Scheduled(cron = "0 0 */12 * * ?")
+    public void deleteOssFiles() {
+        List<String> keys = ossClientUtil.listFiles(ossClientUtil.bucketName);
+        if (keys.size() > 0) {
+            ossClientUtil.deleteFiles(ossClientUtil.bucketName, keys);
         }
     }
 }

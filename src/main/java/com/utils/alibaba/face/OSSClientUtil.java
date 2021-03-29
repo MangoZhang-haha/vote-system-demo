@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Mango
@@ -24,22 +26,22 @@ import java.util.Date;
 public class OSSClientUtil {
 
     @Value("${alibaba.face.access-key-id}")
-    private String accessKeyID;
+    public String accessKeyID;
 
     @Value("${alibaba.face.access-key-secret}")
-    private String accessKeySecret;
+    public String accessKeySecret;
 
     @Value("${alibaba.face.region-id}")
-    private String regionID;
+    public String regionID;
 
     @Value("${alibaba.face.bucket-name}")
-    private String bucketName;
+    public String bucketName;
 
     @Value("${alibaba.face.access-url}")
-    private String accessUrl;
+    public String accessUrl;
 
     @Value("${alibaba.face.endpoint}")
-    private String endpoint;
+    public String endpoint;
 
     private static OSSClient ossClient;
 
@@ -86,5 +88,33 @@ public class OSSClientUtil {
         objectMetadata.setCacheControl("no-cache");
         objectMetadata.setHeader("Pragma", "no-cache");
         return objectMetadata;
+    }
+
+    /**
+     * 罗列出oss中单个bucket中的文件（默认是100个）
+     */
+    public List<String> listFiles(String bucketName) {
+        List<String> result = new ArrayList<>();
+        ObjectListing objectListing = ossClient.listObjects(bucketName);
+        List<OSSObjectSummary> objectSummaries = objectListing.getObjectSummaries();
+        objectSummaries.forEach(ossObjectSummary -> {
+            result.add(ossObjectSummary.getKey());
+        });
+        return result;
+    }
+
+    /**
+     * 批量删除oss中单个bucket中的文件
+     * @param bucketName
+     * @param keys
+     * @return
+     */
+    public List<String> deleteFiles(String bucketName, List<String> keys) {
+        DeleteObjectsResult deleteObjectsResult = ossClient.deleteObjects(new DeleteObjectsRequest(bucketName).withKeys(keys));
+        List<String> deletedObjects = deleteObjectsResult.getDeletedObjects();
+
+        //关闭ossClient
+        ossClient.shutdown();
+        return deletedObjects;
     }
 }
