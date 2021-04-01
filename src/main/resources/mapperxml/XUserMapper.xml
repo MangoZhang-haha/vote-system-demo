@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.XUserMapper">
+  <resultMap id="BaseResultMap" type="com.domain.XUser">
+    <!--@mbg.generated-->
+    <!--@Table x_user-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="face_id" jdbcType="VARCHAR" property="faceId" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="qq_number" jdbcType="VARCHAR" property="qqNumber" />
+    <result column="wechat_number" jdbcType="VARCHAR" property="wechatNumber" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="login_times" jdbcType="BIGINT" property="loginTimes" />
+    <result column="lastest_login_time" jdbcType="TIMESTAMP" property="lastestLoginTime" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="salty" jdbcType="INTEGER" property="salty" />
+    <result column="active" jdbcType="BIT" property="active" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, username, `password`, face_id, phone, id_number, email, qq_number, wechat_number, 
+    real_name, login_times, lastest_login_time, avatar, salty, active, deleted, gmt_create, 
+    gmt_modified
+  </sql>
+</mapper>

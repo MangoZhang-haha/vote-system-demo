@@ -4,17 +4,13 @@ import com.domain.Result;
 import com.utils.FileUtils;
 import com.utils.ResultUtil;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * @author Mango
@@ -39,10 +35,10 @@ public class FileController {
         }
     }
 
-    @ApiOperation("删除临时文件")
-    @DeleteMapping("/tmpDelete")
-    public Result tmpDelete(@RequestParam("path") @ApiParam("path") String path) {
-        FileUtils.deleteTmp(path);
+    @ApiOperation("删除文件")
+    @DeleteMapping("/fileDelete")
+    public Result fileDelete(@RequestParam("path") @ApiParam("path") String path) {
+        FileUtils.deleteFile(path);
         return ResultUtil.success();
     }
 }

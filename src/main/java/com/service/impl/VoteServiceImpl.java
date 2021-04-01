@@ -5,8 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.domain.VoteCandidate;
+import com.domain.VoteEv;
 import com.domain.VoteRecords;
 import com.mapper.VoteCandidateMapper;
+import com.mapper.VoteEvMapper;
 import com.mapper.VoteRecordsMapper;
 import com.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,9 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
     @Autowired
     private VoteRecordsMapper voteRecordsMapper;
 
+    @Autowired
+    private VoteEvMapper voteEvMapper;
+
     @Override
     public String getNoticedIDs(String json) {
         List<Long> ownerIDs = new ArrayList<>();
@@ -49,6 +54,19 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
         for (VoteCandidate candidate : candidateList) {
             candidate.setVoteId(vote.getId());
             candidate.setPicUrls(FileUtils.moveToDocument(candidate.getPicUrls()));
+        }
+        if (!vote.getWhetherDraft() || vote.getWhetherDraft() == null) {
+            VoteEv voteEv = VoteEv.builder()
+                    .voteId(vote.getId())
+                    .applicationId("")
+                    .build();
+            voteEvMapper.insert(voteEv);
+            voteEvMapper.update(
+                    null,
+                    Wrappers.lambdaUpdate(VoteEv.class)
+                            .set(VoteEv::getApplicationId, generatorApplicationID(voteEv.getId()))
+                            .eq(VoteEv::getId, voteEv.getId())
+            );
         }
         return voteCandidateMapper.insertList(candidateList, new Date());
     }
@@ -123,6 +141,15 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
                 }
             });
         }
+    }
+
+    /**
+     * 生成 申请编号
+     * @param ID
+     * @return
+     */
+    public String generatorApplicationID(Long ID) {
+        return "V" + String.format("%08d", ID);
     }
 }
 

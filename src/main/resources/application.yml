@@ -31,3 +31,10 @@ alibaba:
 face-verify:
   #小程序人脸识别模块是否展示
   is-show: false
+
+
+#logging:
+#  config: classpath:logback.xml
+#  level:
+#    com.mapper: debug
+#    com.pojo.mapper: debug

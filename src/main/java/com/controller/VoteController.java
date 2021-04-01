@@ -7,10 +7,7 @@ import com.constant.CommonConstant;
 import com.domain.*;
 import com.pojo.VoteInfo;
 import com.pojo.VoteSituation;
-import com.service.OwnerService;
-import com.service.VoteCandidateService;
-import com.service.VoteRecordsService;
-import com.service.VoteService;
+import com.service.*;
 import com.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +31,11 @@ import java.util.stream.Collectors;
 @Api(tags = "投票控制器")
 public class VoteController {
 
+    /**
+     * 审核通过状态
+     */
+    private final Integer PASS_STATUS = 1;
+
     @Value("${file.tmp}")
     private String tmpPath;
 
@@ -48,6 +50,9 @@ public class VoteController {
 
     @Autowired
     private OwnerService ownerService;
+
+    @Autowired
+    private VoteEvService voteEvService;
 
     @ApiOperation("创建投票")
     @PostMapping
@@ -114,12 +119,26 @@ public class VoteController {
     @ApiOperation("获取投票项目列表")
     @GetMapping
     public Result getVoteList() {
+        List<VoteEv> voteEvs = voteEvService.list(
+                Wrappers.lambdaQuery(VoteEv.class)
+                        .select(VoteEv::getVoteId)
+                        .eq(VoteEv::getApplyStatus, PASS_STATUS)
+        );
+        List<Long> votePassIDs = new ArrayList<>();
+        voteEvs.forEach(voteEv -> {
+            votePassIDs.add(voteEv.getVoteId());
+        });
+        if (votePassIDs.size() == 0) {
+            return ResultUtil.success(null);
+        }
+
         List<Vote> list = voteService.list(
                 Wrappers.lambdaQuery(Vote.class)
                         .select(
                                 Vote::getId, Vote::getTitle, Vote::getWhetherDraft,
                                 Vote::getVisitNum, Vote::getStartTime, Vote::getEndTime
                         )
+                        .in(Vote::getId, votePassIDs)
                         .orderByDesc(Vote::getGmtCreate)
         );
         Date now = new Date();
