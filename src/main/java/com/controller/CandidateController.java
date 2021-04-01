@@ -13,6 +13,7 @@ import com.service.VoteCandidateService;
 import com.service.VoteRecordsService;
 import com.service.VoteService;
 import com.utils.ResultUtil;
+import com.utils.TimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,6 +31,16 @@ import java.util.*;
 @RequestMapping("/candidate")
 @Api(tags = "候选人控制器")
 public class CandidateController {
+
+    /**
+     * 只能投票一次
+     */
+    private static final Long ONLY_VOTE_ONCE = 1L;
+
+    /**
+     * 每天可投一次
+     */
+    private static final Long VOTE_ONCE_PER_DAY = 2L;
 
     @Autowired
     private VoteService voteService;
@@ -105,9 +116,33 @@ public class CandidateController {
 
     @ApiOperation("给候选人投票")
     @PostMapping("/voteForCandidate")
-    public Result voteForCandidate(@RequestParam("userID") @ApiParam("当前操作的用户的ID") Long useID,
+    public Result voteForCandidate(@RequestParam("userID") @ApiParam("当前操作的用户的ID") Long userID,
                                    @RequestParam("candidateTableID") @ApiParam("候选人的ID") Long candidateTableID) {
-        voteRecordsService.voteForCandidate(useID, candidateTableID);
+        VoteCandidate voteCandidate = voteCandidateService.getById(candidateTableID);
+        Vote vote = voteService.getById(voteCandidate.getVoteId());
+        if (vote.getVoteLimitId().equals(ONLY_VOTE_ONCE)) {
+            int count = voteRecordsService.count(
+                    Wrappers.lambdaQuery(VoteRecords.class)
+                            .eq(VoteRecords::getVoteId, voteCandidate.getVoteId())
+                            .eq(VoteRecords::getOwnerId, userID)
+            );
+            if (count > 0) {
+                return ResultUtil.error("您已经投过票了,请勿重复投票");
+            }
+        } else if (vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY)){
+            int count = voteRecordsService.count(
+                    Wrappers.lambdaQuery(VoteRecords.class)
+                            .eq(VoteRecords::getVoteId, voteCandidate.getVoteId())
+                            .eq(VoteRecords::getOwnerId, userID)
+                            .like(VoteRecords::getGmtCreate, TimeUtil.formatTime("yyyy-MM-dd"))
+            );
+            if (count > 0) {
+                return ResultUtil.error("您今天已经投过票了,请勿重复投票");
+            }
+        } else {
+            return ResultUtil.error("未知投票类型");
+        }
+        voteRecordsService.voteForCandidate(userID, candidateTableID);
         return ResultUtil.success();
     }
 }
