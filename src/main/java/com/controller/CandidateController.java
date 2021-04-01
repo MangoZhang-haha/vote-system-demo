@@ -20,10 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Mango
@@ -76,6 +73,8 @@ public class CandidateController {
     @GetMapping("/{voteID}")
     public Result getAllCandidates(@PathVariable("voteID") @ApiParam("投票项目ID") Long voteID) {
         Vote vote = voteService.getById(voteID);
+        Date now = new Date();
+        vote.setEndOrNot(vote.getEndTime().getTime() < now.getTime());
         VoteTotalInfo voteTotalInfo = new VoteTotalInfo();
         voteTotalInfo.setVote(vote);
 
