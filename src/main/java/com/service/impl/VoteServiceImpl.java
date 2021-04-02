@@ -87,6 +87,74 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
         return 1;
     }
 
+    @Override
+    public Integer updateVote(Vote vote, List<VoteCandidate> candidateList) {
+        for (VoteCandidate voteCandidate : candidateList) {
+            if (voteCandidate.getPicUrls().contains("/tmp/")) {
+                if (!FileUtils.checkTmpExist(voteCandidate.getPicUrls())) {
+                    return -1;
+                }
+            }
+        }
+
+        voteMapper.updateById(vote);
+
+        for (VoteCandidate voteCandidate : candidateList) {
+            if (voteCandidate.getPicUrls().contains("/tmp/")) {
+                voteCandidate.setPicUrls(FileUtils.moveToDocument(voteCandidate.getPicUrls()));
+            }
+            if (voteCandidate.getId() != null) {
+                voteCandidateMapper.updateById(voteCandidate);
+            } else {
+                voteCandidate.setVoteId(vote.getId());
+                voteCandidateMapper.insert(voteCandidate);
+            }
+        }
+        if (!vote.getWhetherDraft() || vote.getWhetherDraft() == null) {
+            VoteEv voteEv = VoteEv.builder()
+                    .voteId(vote.getId())
+                    .applicationId("")
+                    .build();
+            voteEvMapper.insert(voteEv);
+            voteEvMapper.update(
+                    null,
+                    Wrappers.lambdaUpdate(VoteEv.class)
+                            .set(VoteEv::getApplicationId, generatorApplicationID(voteEv.getId()))
+                            .eq(VoteEv::getId, voteEv.getId())
+            );
+            voteMapper.update(
+                    null,
+                    Wrappers.lambdaUpdate(Vote.class)
+                            .set(Vote::getWhetherDraft, false)
+                            .eq(Vote::getId, vote.getId())
+            );
+        }
+        return 1;
+    }
+
+
+    @Override
+    public Integer toEv(Long voteID) {
+        voteMapper.update(
+                null,
+                Wrappers.lambdaUpdate(Vote.class)
+                        .set(Vote::getWhetherDraft, false)
+                        .eq(Vote::getId, voteID)
+        );
+        VoteEv voteEv = VoteEv.builder()
+                .voteId(voteID)
+                .applicationId("")
+                .build();
+        voteEvMapper.insert(voteEv);
+        voteEvMapper.update(
+                null,
+                Wrappers.lambdaUpdate(VoteEv.class)
+                        .set(VoteEv::getApplicationId, generatorApplicationID(voteEv.getId()))
+                        .eq(VoteEv::getId, voteEv.getId())
+        );
+        return 1;
+    }
+
     public void calCommunity(JSONObject jsonObject, List<Long> ownerIDs) {
         if (JSONObject.parseArray(JSONObject.toJSONString(jsonObject.get("children"))) == null) {
             return;

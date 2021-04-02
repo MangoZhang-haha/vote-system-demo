@@ -88,4 +88,16 @@ public class FileUtils {
         }
         return "";
     }
+
+    public static Boolean checkTmpExist(String url) {
+        String[] item = url.split(CommonConstant.PIC_URLS_SPLIT_CHARS);
+        File itemFile = null;
+        for (int i = 0; i < item.length; i++) {
+            itemFile = new File(TMP_PATH, item[i].substring(item[i].lastIndexOf(File.separator) + 1));
+            if (!itemFile.exists()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
