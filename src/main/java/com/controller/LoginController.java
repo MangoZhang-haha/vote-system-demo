@@ -197,7 +197,7 @@ public class LoginController {
                 break;
         }
 
-        if (owner != null && xUser != null) {
+        if (owner != null || xUser != null) {
             return ResultUtil.success("该用户存在");
         } else {
             return ResultUtil.error("该账户不存在");
