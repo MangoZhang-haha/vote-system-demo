@@ -107,7 +107,7 @@ public class LoginController {
                 break;
         }
 
-        if (owner != null && xUser != null) {
+        if (owner != null || xUser != null) {
             String url = FileUtils.uploadTmp(multipartFile);
             System.out.println("url = " + url);
             url = "https://www.hah-mango.com/res" + url;
