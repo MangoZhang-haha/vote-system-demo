@@ -54,6 +54,12 @@ public class VoteController {
     @Autowired
     private VoteEvService voteEvService;
 
+    @Autowired
+    private VoteLimitService voteLimitService;
+
+    @Autowired
+    private VoteTypeService voteTypeService;
+
     @ApiOperation("创建投票")
     @PostMapping
     public Result create(@RequestBody Map<String,Object> map) {
@@ -214,6 +220,10 @@ public class VoteController {
             tops.add(top);
         }
         voteInfo.setTops(tops);
+        voteInfo.setVoteLimitID(vote.getVoteLimitId());
+        voteInfo.setVoteLimitName(voteLimitService.getById(vote.getVoteLimitId()).getVoteLimitName());
+        voteInfo.setVoteTypeID(vote.getVoteTypeId());
+        voteInfo.setVoteTypeName(voteTypeService.getById(vote.getVoteTypeId()).getVoteTypeName());
         return ResultUtil.success(voteInfo);
     }
 

@@ -62,6 +62,14 @@ public class VoteInfo implements Serializable {
      */
     private List<Top> tops;
 
+    private Long voteLimitID;
+
+    private String voteLimitName;
+
+    private Long voteTypeID;
+
+    private String voteTypeName;
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
