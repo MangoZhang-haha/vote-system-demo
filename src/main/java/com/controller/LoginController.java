@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.domain.Owner;
 import com.domain.Result;
 import com.domain.XUser;
-import com.service.OwnerService;
-import com.service.XRoleService;
-import com.service.XUserRoleService;
-import com.service.XUserService;
+import com.service.*;
 import com.utils.FileUtils;
 import com.utils.ResultUtil;
 import com.utils.alibaba.face.FaceUtil;
@@ -65,6 +62,9 @@ public class LoginController {
     @Autowired
     private XRoleService xRoleService;
 
+    @Autowired
+    private PublicService publicService;
+
     @ApiOperation("用户登陆")
     @PostMapping("/login")
     public Result login(@RequestParam("loginAccount") @ApiParam("登陆账号（手机号|身份证号）") String loginAccount,
@@ -109,11 +109,10 @@ public class LoginController {
 
         if (owner != null || xUser != null) {
             String url = FileUtils.uploadTmp(multipartFile);
-            System.out.println("url = " + url);
-            url = "https://www.hah-mango.com/res" + url;
+//            url = "https://www.xxxxx.com/res" + url;
+            url = publicService.getStaticResPrefixUrl() + url;
             String fileName = url.substring(url.lastIndexOf(File.separator) + 1);
             String ossFileUrl = ossClientUtil.uploadWebFile(url, fileName);
-            System.out.println("ossFileUrl = " + ossFileUrl);
             Boolean haveFace = faceUtil.DetectFace(ossFileUrl);
             List<String> faceIDs = faceUtil.searchFace(defaultDbName, ossFileUrl);
             if (!haveFace) {

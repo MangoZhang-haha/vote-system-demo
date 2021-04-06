@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PublicServiceImpl implements PublicService {
 
-    @Value("${static-res.port}")
-    private String port;
-
     @Value("${server-ip}")
     private String serverIp;
 
