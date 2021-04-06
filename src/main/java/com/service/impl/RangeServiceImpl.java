@@ -115,43 +115,45 @@ public class RangeServiceImpl implements RangeService {
 
         // 设置小区下面的楼宇
         communityInfos.forEach(communityInfo -> {
-            List<Long> buildingIDs = communityBuildingMap.get(communityInfo.getId());
-            List<BuildingInfo> buildingInfos = new ArrayList<>();
-            buildingIDs.forEach(buildingID -> {
-                BuildingInfo buildingInfo = new BuildingInfo();
-                Building building = buildingMap.get(buildingID);
-                buildingInfo.setId(building.getId());
-                buildingInfo.setName(building.getBuildingName());
-                buildingInfo.setPeopleNum(buildingMapper.countOwnerNumbers(buildingID));
-                if (unitMap.get(building.getId()) != null) {
-                    List<Unit> unitList = unitMap.get(building.getId());
-                    List<UnitInfo> unitInfos = new ArrayList<>();
-                    unitList.forEach(unit -> {
-                        UnitInfo unitInfo = new UnitInfo();
-                        unitInfo.setName(unit.getUnitName());
-                        unitInfo.setUnitTableID(unit.getId());
-                        unitInfo.setPeopleNum(unitMapper.countOwnerNumbers(unit.getId()));
-                        if (unitHouseMap.get(unit.getId()) != null) {
-                            List<Long> unitHouseList = unitHouseMap.get(unit.getId());
-                            List<HouseInfo> houseInfos = new ArrayList<>();
-                            unitHouseList.forEach(houseID -> {
-                                if (houseMap.get(houseID) != null && ownerHouseMap.get(houseID) != null) {
-                                    HouseInfo houseInfo = new HouseInfo();
-                                    houseInfo.setId(houseID);
-                                    houseInfo.setName(houseMap.get(houseID).getHouseNumber());
-                                    houseInfo.setOwnerID(ownerHouseMap.get(houseID));
-                                    houseInfos.add(houseInfo);
-                                }
-                            });
-                            unitInfo.setChildren(houseInfos);
-                        }
-                        unitInfos.add(unitInfo);
-                    });
-                    buildingInfo.setChildren(unitInfos);
-                }
-                buildingInfos.add(buildingInfo);
-            });
-            communityInfo.setChildren(buildingInfos);
+            if (communityBuildingMap.get(communityInfo.getId()) != null) {
+                List<Long> buildingIDs = communityBuildingMap.get(communityInfo.getId());
+                List<BuildingInfo> buildingInfos = new ArrayList<>();
+                buildingIDs.forEach(buildingID -> {
+                    BuildingInfo buildingInfo = new BuildingInfo();
+                    Building building = buildingMap.get(buildingID);
+                    buildingInfo.setId(building.getId());
+                    buildingInfo.setName(building.getBuildingName());
+                    buildingInfo.setPeopleNum(buildingMapper.countOwnerNumbers(buildingID));
+                    if (unitMap.get(building.getId()) != null) {
+                        List<Unit> unitList = unitMap.get(building.getId());
+                        List<UnitInfo> unitInfos = new ArrayList<>();
+                        unitList.forEach(unit -> {
+                            UnitInfo unitInfo = new UnitInfo();
+                            unitInfo.setName(unit.getUnitName());
+                            unitInfo.setUnitTableID(unit.getId());
+                            unitInfo.setPeopleNum(unitMapper.countOwnerNumbers(unit.getId()));
+                            if (unitHouseMap.get(unit.getId()) != null) {
+                                List<Long> unitHouseList = unitHouseMap.get(unit.getId());
+                                List<HouseInfo> houseInfos = new ArrayList<>();
+                                unitHouseList.forEach(houseID -> {
+                                    if (houseMap.get(houseID) != null && ownerHouseMap.get(houseID) != null) {
+                                        HouseInfo houseInfo = new HouseInfo();
+                                        houseInfo.setId(houseID);
+                                        houseInfo.setName(houseMap.get(houseID).getHouseNumber());
+                                        houseInfo.setOwnerID(ownerHouseMap.get(houseID));
+                                        houseInfos.add(houseInfo);
+                                    }
+                                });
+                                unitInfo.setChildren(houseInfos);
+                            }
+                            unitInfos.add(unitInfo);
+                        });
+                        buildingInfo.setChildren(unitInfos);
+                    }
+                    buildingInfos.add(buildingInfo);
+                });
+                communityInfo.setChildren(buildingInfos);
+            }
         });
         return range;
     }

@@ -288,13 +288,13 @@ public class VoteController {
             List<Long> notVotedIDs = ownerNoticedIds.stream().filter(item -> !ownerIDs.contains(item)).collect(Collectors.toList());
             List<Owner> owners = ownerService.listByIds(notVotedIDs);
             owners.forEach(owner -> {
-                VoteSituation voteSituation = new VoteSituation();
-                voteSituation.setOwnerID(owner.getId());
-                voteSituation.setOwnerName(owner.getOwnerName());
-                voteSituation.setAvatarUrl(owner.getAvatarUrl());
-                voteSituations.add(voteSituation);
-            });
-        }
+            VoteSituation voteSituation = new VoteSituation();
+            voteSituation.setOwnerID(owner.getId());
+            voteSituation.setOwnerName(owner.getOwnerName());
+            voteSituation.setAvatarUrl(owner.getAvatarUrl());
+            voteSituations.add(voteSituation);
+        });
+    }
         return ResultUtil.success(voteSituations);
     }
 
