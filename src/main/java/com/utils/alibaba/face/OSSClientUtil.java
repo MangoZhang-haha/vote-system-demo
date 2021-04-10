@@ -54,6 +54,13 @@ public class OSSClientUtil {
     }
 
     /**
+     * 设置bucket公共读
+     */
+    public void setBucketPublic() {
+        ossClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+    }
+
+    /**
      * 将网络图片放到OSS下存储
      * @param fileUrl
      * @param fileName

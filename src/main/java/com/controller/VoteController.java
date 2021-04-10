@@ -367,4 +367,11 @@ public class VoteController {
         }
         return ResultUtil.error("修改失败");
     }
+
+    @ApiOperation("获取是否可以亲人代替投票")
+    @GetMapping("/checkRelatives/{voteID}")
+    public Result whetherReplaceByRelatives(@PathVariable("voteID") @ApiParam("投票项目id") Long voteID) {
+        Vote vote = voteService.getById(voteID);
+        return ResultUtil.success(vote.getWhetherReplaceByRelatives());
+    }
 }

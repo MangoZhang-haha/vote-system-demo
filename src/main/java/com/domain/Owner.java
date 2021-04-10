@@ -139,6 +139,27 @@ public class Owner implements Serializable {
     @ApiModelProperty(value = "头像地址")
     private String avatarUrl;
 
+    /**
+     * 审核通过
+     */
+    @ApiModelProperty(value = "审核通过")
+    @TableField(value = "approved")
+    private Integer approved;
+
+    /**
+     * 审核操作人id
+     */
+    @ApiModelProperty(value = "审核操作人id")
+    @TableField(value = "operator_id")
+    private Long operatorId;
+
+    /**
+     * 账号封停状态(0 审核中 1 审核通过 2 审核未通过)
+     */
+    @TableField(value = "whether_active")
+    @ApiModelProperty(value = "账号封停状态(0 审核中 1 审核通过 2 审核未通过)")
+    private Boolean whetherActive;
+
     @TableField(value = "deleted")
     @ApiModelProperty(value = "")
     private Boolean deleted;
@@ -186,6 +207,12 @@ public class Owner implements Serializable {
     public static final String COL_ROLE_TYPE = "role_type";
 
     public static final String COL_AVATAR_URL = "avatar_url";
+
+    public static final String COL_APPROVED = "approved";
+
+    public static final String COL_OPERATOR_ID = "operator_id";
+
+    public static final String COL_WHETHER_ACTIVE = "whether_active";
 
     public static final String COL_DELETED = "deleted";
 
