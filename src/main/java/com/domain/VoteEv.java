@@ -43,11 +43,24 @@ public class VoteEv implements Serializable {
     private String applicationId;
 
     /**
-     * 审核状态0 审核中 1 已通过 2 未通过
+     * 审核状态0 审核中 1 住建委终审 2 住建委未通过 3 街道一审 4 街道未通过
      */
     @TableField(value = "apply_status")
-    @ApiModelProperty(value = "审核状态0 审核中 1 已通过 2 未通过")
+    @ApiModelProperty(value = "审核状态0 审核中 1 住建委终审 2 住建委未通过 3 街道一审 4 街道未通过")
     private Integer applyStatus;
+
+    /**
+     * 住建委审核人id
+     * Housing and Urban Rural Development Commission
+     */
+    @TableField(value = "operator_id_HURDC")
+    private Long operatorIdHURDC;
+
+    /**
+     * 街道审核人id
+     */
+    @TableField(value = "operator_id_street")
+    private Long operatorIdStreet;
 
     /**
      * 逻辑删除状态
@@ -79,6 +92,10 @@ public class VoteEv implements Serializable {
     public static final String COL_APPLICATION_ID = "application_id";
 
     public static final String COL_APPLY_STATUS = "apply_status";
+
+    public static final String COL_OPERATOR_HURDC = "operator_id_HURDC";
+
+    public static final String COL_OPERATOR_street = "operator_id_street";
 
     public static final String COL_DELETED = "deleted";
 

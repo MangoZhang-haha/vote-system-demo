@@ -21,6 +21,9 @@
     <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
     <result column="role_type" jdbcType="INTEGER" property="roleType" />
     <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
+    <result column="approved" jdbcType="INTEGER" property="approved" />
+    <result column="operator_id" jdbcType="BIGINT" property="operatorId" />
+    <result column="whether_active" jdbcType="BIT" property="whetherActive" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />

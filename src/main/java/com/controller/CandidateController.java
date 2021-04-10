@@ -1,22 +1,18 @@
 package com.controller;
 
+import cn.hutool.core.util.CharUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.constant.CommonConstant;
-import com.domain.Result;
-import com.domain.Vote;
-import com.domain.VoteCandidate;
-import com.domain.VoteRecords;
+import com.domain.*;
 import com.pojo.CandidateInfo;
 import com.pojo.VoteTotalInfo;
-import com.service.PublicService;
-import com.service.VoteCandidateService;
-import com.service.VoteRecordsService;
-import com.service.VoteService;
+import com.service.*;
 import com.utils.ResultUtil;
 import com.utils.TimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +49,9 @@ public class CandidateController {
 
     @Autowired
     private VoteRecordsService voteRecordsService;
+
+    @Autowired
+    private OwnerService ownerService;
 
     @ApiOperation("查看候选人的具体信息")
     @GetMapping("/getCandidateDetail/{candidateTableID}")
@@ -120,24 +119,40 @@ public class CandidateController {
                                    @RequestParam("candidateTableID") @ApiParam("候选人的ID") Long candidateTableID) {
         VoteCandidate voteCandidate = voteCandidateService.getById(candidateTableID);
         Vote vote = voteService.getById(voteCandidate.getVoteId());
-        if (vote.getVoteLimitId().equals(ONLY_VOTE_ONCE)) {
-            int count = voteRecordsService.count(
+        StringBuffer append = new StringBuffer(vote.getOwnerNoticedIds()).insert(0, CharUtil.COMMA).append(CharUtil.COMMA);
+        StringBuffer key = new StringBuffer(userID.toString()).insert(0, CharUtil.COMMA).append(CharUtil.COMMA);
+        if (append.indexOf(key.toString()) < 0) {
+            return ResultUtil.error("您不在邀请的名单里，不能参与投票");
+        }
+        Owner currentUser = ownerService.getById(userID);
+        Boolean isOwner = true;
+        List<Long> userIDs = new ArrayList<>();
+        if (currentUser.getOid() != 0) {
+            isOwner = false;
+        }
+        List<Owner> relatives = ownerService.list(
+                Wrappers.lambdaQuery(Owner.class)
+                        .eq(Owner::getOid, isOwner ? userID : currentUser.getOid())
+        );
+        relatives.forEach(relative -> userIDs.add(relative.getId()));
+        userIDs.add(isOwner ? userID : currentUser.getOid());
+
+        if (vote.getVoteLimitId().equals(ONLY_VOTE_ONCE) || vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY)) {
+            VoteRecords voteRecords = voteRecordsService.getOne(
                     Wrappers.lambdaQuery(VoteRecords.class)
                             .eq(VoteRecords::getVoteId, voteCandidate.getVoteId())
-                            .eq(VoteRecords::getOwnerId, userID)
+                            .in(VoteRecords::getOwnerId, userIDs)
+                            .like(vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY), VoteRecords::getGmtCreate, TimeUtil.formatTime("yyyy-MM-dd"))
             );
-            if (count > 0) {
-                return ResultUtil.error("您已经投过票了,请勿重复投票");
-            }
-        } else if (vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY)){
-            int count = voteRecordsService.count(
-                    Wrappers.lambdaQuery(VoteRecords.class)
-                            .eq(VoteRecords::getVoteId, voteCandidate.getVoteId())
-                            .eq(VoteRecords::getOwnerId, userID)
-                            .like(VoteRecords::getGmtCreate, TimeUtil.formatTime("yyyy-MM-dd"))
-            );
-            if (count > 0) {
-                return ResultUtil.error("您今天已经投过票了,请勿重复投票");
+            if (ObjectUtils.isNotEmpty(voteRecords)) {
+                String today = vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY) ? "今天" : "";
+                if (voteRecords.getOwnerId().equals(userID)) {
+                    return ResultUtil.error("您" + today + "已经投过票了,请勿重复投票");
+                } else {
+                    Owner owner = ownerService.getById(voteRecords.getOwnerId());
+                    return ResultUtil.error(
+                            "您的亲友:" + owner.getOwnerName() + today + "投过票了,请勿重复投票");
+                }
             }
         } else {
             return ResultUtil.error("未知投票类型");
