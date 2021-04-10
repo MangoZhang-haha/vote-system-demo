@@ -11,6 +11,9 @@ import com.pojo.VoteTotalInfo;
 import com.service.*;
 import com.utils.ResultUtil;
 import com.utils.WrapperUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @RequestMapping("/notice")
 @RestController
+@Api(tags = "公告控制器")
 public class NoticeController {
     @Autowired
     private NoticeService noticeService;
@@ -42,10 +46,11 @@ public class NoticeController {
     @Autowired
     private VoteRecordsService voteRecordsService;
 
+    @ApiOperation("获取公告（分页）")
     @GetMapping
-    public Result getNotice(@RequestParam(value = "typeID",required = false)Integer typeID,
-                            @RequestParam(value = "page",defaultValue = "1")Integer page,
-                            @RequestParam(value = "size",defaultValue = "10")Integer size,
+    public Result getNotice(@RequestParam(value = "typeID",required = false) @ApiParam Integer typeID,
+                            @RequestParam(value = "page",defaultValue = "1") @ApiParam Integer page,
+                            @RequestParam(value = "size",defaultValue = "10") @ApiParam Integer size,
                             @ModelAttribute Notice notice,
                             String sorts){
         if (typeID != null){
@@ -104,8 +109,9 @@ public class NoticeController {
      * @param noticeID
      * @return
      */
+    @ApiOperation("通过id获取公告详情")
     @GetMapping("/detail/{noticeID}")
-    public Result getNoticeDetail(@PathVariable Long noticeID){
+    public Result getNoticeDetail(@PathVariable @ApiParam Long noticeID){
         Notice notice = noticeService.getById(noticeID);
         NoticeVote noticeVote = noticeVoteService.getOne(
                 Wrappers.<NoticeVote>lambdaQuery()
@@ -163,9 +169,10 @@ public class NoticeController {
      * @param notice
      * @return
      */
+    @ApiOperation("添加公告")
     @PostMapping
-    public Result createNotice(@ModelAttribute Notice notice,
-                               @RequestParam(value = "voteID",required = false)Long voteID){
+    public Result createNotice(@ModelAttribute @ApiParam("公告实体类") Notice notice,
+                               @RequestParam(value = "voteID",required = false) @ApiParam("投票项目id") Long voteID){
         if (notice.getTitle() == null){
             return ResultUtil.error("标题不能为空");
         }
@@ -188,8 +195,9 @@ public class NoticeController {
      * @param notice
      * @return
      */
+    @ApiOperation("更新公告")
     @PutMapping
-    public Result editNotice(@ModelAttribute Notice notice){
+    public Result editNotice(@ModelAttribute @ApiParam("Notice实体类") Notice notice){
         if (notice.getId() == null) {
             return ResultUtil.error("公告id不能为空");
         }
@@ -210,8 +218,9 @@ public class NoticeController {
      * @param noticeID
      * @return
      */
+    @ApiOperation("删除一条公告")
     @DeleteMapping("{noticeID}")
-    public Result deleteNotice(@PathVariable Long noticeID){
+    public Result deleteNotice(@PathVariable @ApiParam Long noticeID){
         int result = noticeService.deleteNotice(noticeID);
         if (result > 0){
             return ResultUtil.success("删除成功");
@@ -224,8 +233,9 @@ public class NoticeController {
      * @param idsStr
      * @return
      */
+    @ApiOperation("批量删除")
     @DeleteMapping("/deleteIds")
-    public Result deleteAllById(@RequestParam String idsStr) {
+    public Result deleteAllById(@RequestParam @ApiParam("公告IDs,英文逗号分割") String idsStr) {
         if (this.noticeService.removeByIds(Arrays
                 .stream(idsStr.split(","))
                 .map(Long::valueOf)
@@ -239,6 +249,7 @@ public class NoticeController {
      * 获取所有投票类型
      * @return
      */
+    @ApiOperation("获取所有投票类型")
     @GetMapping("/noticeType")
     public Result getNoticeType(){
         return ResultUtil.success(noticeTypeService.list());
