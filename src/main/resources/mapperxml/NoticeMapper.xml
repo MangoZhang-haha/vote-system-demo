@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.NoticeMapper">
+  <resultMap id="BaseResultMap" type="com.domain.Notice">
+    <!--@mbg.generated-->
+    <!--@Table notice-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ano" jdbcType="VARCHAR" property="ano" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, ano, title, content, pic_url, deleted, gmt_create, gmt_modified
+  </sql>
+</mapper>

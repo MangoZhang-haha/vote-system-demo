@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.NoticeOwnerMapper">
+  <resultMap id="BaseResultMap" type="com.domain.NoticeOwner">
+    <!--@mbg.generated-->
+    <!--@Table notice_owner-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="notice_id" jdbcType="BIGINT" property="noticeId" />
+    <result column="owner_id" jdbcType="BIGINT" property="ownerId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, notice_id, owner_id, `status`, deleted, gmt_create, gmt_modified
+  </sql>
+
+  <insert id="addList">
+    insert into notice_owner
+    (
+        notice_id,
+        owner_id,
+        status,
+        gmt_create,
+        gmt_modified
+    )
+    values
+        <foreach collection="list"  index="index" item="noticeOwner" separator=",">
+            (
+                #{noticeOwner.noticeId,jdbcType=BIGINT},
+                #{noticeOwner.ownerId,jdbcType=BIGINT},
+                #{noticeOwner.status,jdbcType=INTEGER},
+                #{now,jdbcType=TIMESTAMP},
+                #{now,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+  </insert>
+</mapper>
