@@ -10,7 +10,7 @@ import java.util.Collection;
 public interface NoticeService extends IService<Notice>, BaseService<Notice> {
 
     @Transactional(rollbackFor = Exception.class)
-    int createNotice(Notice notice);
+    int createNotice(Notice notice,Long voteID);
 
     @Transactional(rollbackFor = Exception.class)
     int editNotice(Notice notice);

@@ -3,10 +3,7 @@ package com.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
-import com.domain.Notice;
-import com.domain.NoticeOwner;
-import com.domain.NoticeTypeRelation;
-import com.domain.Owner;
+import com.domain.*;
 import com.enums.ResultEnum;
 import com.exception.CustomException;
 import com.mapper.*;
@@ -32,9 +29,11 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
     private NoticeOwnerMapper noticeOwnerMapper;
     @Autowired
     private OwnerMapper ownerMapper;
+    @Autowired
+    private NoticeVoteMapper noticeVoteMapper;
 
     @Override
-    public int createNotice(Notice notice) {
+    public int createNotice(Notice notice,Long voteID) {
         notice.setAno("");
         noticeMapper.insert(notice);
         noticeMapper.update(
@@ -60,6 +59,13 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
         }
         if (noticeOwnerList.size() > 0) {
             noticeOwnerMapper.addList(noticeOwnerList, new Date());
+        }
+        if (voteID != null){
+            NoticeVote noticeVote = NoticeVote.builder()
+                    .noticeId(notice.getId())
+                    .voteId(voteID)
+                    .build();
+            noticeVoteMapper.insert(noticeVote);
         }
         return 1;
     }
