@@ -83,8 +83,6 @@ public class NoticeController {
                     NoticeType noticeType = noticeTypeService.getById(relation.getNoticeTypeId());
                     notice1.setTypeID(noticeType.getId());
                     notice1.setTypeName(noticeType.getTypeName());
-                    XUser user = xUserService.getById(notice1.getCreatorId());
-                    notice1.setCreatorName(user.getUsername());
                 }
                 result.setRecords(noticeList);
                 return ResultUtil.success(result);
@@ -104,8 +102,6 @@ public class NoticeController {
             NoticeType noticeType = noticeTypeService.getById(relation.getNoticeTypeId());
             notice1.setTypeID(noticeType.getId());
             notice1.setTypeName(noticeType.getTypeName());
-            XUser user = xUserService.getById(notice1.getCreatorId());
-            notice1.setCreatorName(user.getUsername());
         }
         return ResultUtil.success(iPage);
     }

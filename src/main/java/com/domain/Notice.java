@@ -84,9 +84,6 @@ public class Notice implements Serializable {
     @TableField(exist = false)
     private String typeName;
 
-    @TableField(exist = false)
-    private String creatorName;
-
     @TableField(value = "deleted")
     @TableLogic
     private Boolean deleted;
