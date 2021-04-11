@@ -45,8 +45,6 @@ public class NoticeController {
     private PublicService publicService;
     @Autowired
     private VoteRecordsService voteRecordsService;
-    @Autowired
-    private XUserService xUserService;
 
     @ApiOperation("获取公告（分页）")
     @GetMapping
