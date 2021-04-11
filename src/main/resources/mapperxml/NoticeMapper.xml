@@ -9,12 +9,18 @@
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
     <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
+    <result column="approved" jdbcType="INTEGER" property="approved" />
+    <result column="operator_id" jdbcType="BIGINT" property="operatorId" />
+    <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+    <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, ano, title, content, pic_url, deleted, gmt_create, gmt_modified
+    id, ano, title, content, pic_url, creator_id, approved, operator_id, operate_time, 
+    publish_time, deleted, gmt_create, gmt_modified
   </sql>
 </mapper>

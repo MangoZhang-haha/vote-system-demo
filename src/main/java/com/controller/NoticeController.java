@@ -45,6 +45,8 @@ public class NoticeController {
     private PublicService publicService;
     @Autowired
     private VoteRecordsService voteRecordsService;
+    @Autowired
+    private XUserService xUserService;
 
     @ApiOperation("获取公告（分页）")
     @GetMapping
@@ -70,7 +72,7 @@ public class NoticeController {
             result.setTotal(iPage.getTotal());
             if (noticeIDList.size() > 0){
                 QueryWrapper<Notice> wrapper = new QueryWrapper<>();
-                WrapperUtil.like(wrapper,notice,new String[]{"ano","title","content"});
+                WrapperUtil.like(wrapper,notice,new String[]{"ano","title","content","approved"});
                 wrapper.in("id",noticeIDList);
                 List<Notice> noticeList = noticeService.list(wrapper);
                 for (Notice notice1 : noticeList){
@@ -81,6 +83,8 @@ public class NoticeController {
                     NoticeType noticeType = noticeTypeService.getById(relation.getNoticeTypeId());
                     notice1.setTypeID(noticeType.getId());
                     notice1.setTypeName(noticeType.getTypeName());
+                    XUser user = xUserService.getById(notice1.getCreatorId());
+                    notice1.setCreatorName(user.getUsername());
                 }
                 result.setRecords(noticeList);
                 return ResultUtil.success(result);
@@ -89,7 +93,7 @@ public class NoticeController {
             return ResultUtil.success(result);
         }
         QueryWrapper<Notice> wrapper = new QueryWrapper<>();
-        WrapperUtil.like(wrapper, notice, new String[]{"ano", "title","content"});
+        WrapperUtil.like(wrapper, notice, new String[]{"ano", "title","content","approved"});
         Page<Notice> iPage = noticeService.page(new Page<>(page, size), wrapper, sorts);
         List<Notice> noticeList = iPage.getRecords();
         for (Notice notice1 : noticeList){
@@ -100,6 +104,8 @@ public class NoticeController {
             NoticeType noticeType = noticeTypeService.getById(relation.getNoticeTypeId());
             notice1.setTypeID(noticeType.getId());
             notice1.setTypeName(noticeType.getTypeName());
+            XUser user = xUserService.getById(notice1.getCreatorId());
+            notice1.setCreatorName(user.getUsername());
         }
         return ResultUtil.success(iPage);
     }
@@ -182,6 +188,10 @@ public class NoticeController {
         if (notice.getTypeID() == null){
             return ResultUtil.error("类型ID不能为空");
         }
+        if (notice.getCreatorId() == null){
+            return ResultUtil.error("创建人id不能为空");
+        }
+
         int result = noticeService.createNotice(notice,voteID);
         if (result > 0){
             return ResultUtil.success("添加成功");
@@ -210,6 +220,34 @@ public class NoticeController {
             return ResultUtil.success("修改成功");
         }
         return ResultUtil.error("修改失败");
+    }
+
+    /**
+     * 审核公告
+     * @param operatorID
+     * @param noticeID
+     * @return
+     */
+    @PostMapping("/approveNotice")
+    public Result approveNotice(@RequestParam("operatorID")@ApiParam("审核人id") Long operatorID,
+                                @RequestParam("noticeID")@ApiParam("公告id") Long noticeID,
+                                @RequestParam("approved")@ApiParam("操作:  1：审核通过 ， 2：审核不通过") Integer approved){
+        if (approved != 1 && approved != 2){
+            return ResultUtil.error("审核参数有误");
+        }
+
+        Notice notice = Notice.builder()
+                .operatorId(operatorID)
+                .id(noticeID)
+                .approved(approved)
+                .operateTime(new Date())
+                .build();
+
+        int result = noticeService.approveNotice(notice);
+        if (result > 0){
+            return ResultUtil.success("操作成功");
+        }
+        return ResultUtil.error("操作失败");
     }
 
 

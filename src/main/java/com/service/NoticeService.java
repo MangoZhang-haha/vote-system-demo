@@ -10,7 +10,7 @@ import java.util.Collection;
 public interface NoticeService extends IService<Notice>, BaseService<Notice> {
 
     @Transactional(rollbackFor = Exception.class)
-    int createNotice(Notice notice,Long voteID);
+    int createNotice(Notice notice, Long voteID);
 
     @Transactional(rollbackFor = Exception.class)
     int editNotice(Notice notice);
@@ -19,8 +19,13 @@ public interface NoticeService extends IService<Notice>, BaseService<Notice> {
     int deleteNotice(Long noticeID);
 
     @Transactional(rollbackFor = Exception.class)
+    int approveNotice(Notice notice);
+
+    @Transactional(rollbackFor = Exception.class)
     boolean removeByIds(Collection<? extends Serializable> idList);
 }
+
+
 
 
 

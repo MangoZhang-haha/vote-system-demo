@@ -8,6 +8,7 @@ import com.enums.ResultEnum;
 import com.exception.CustomException;
 import com.mapper.*;
 import com.service.NoticeService;
+import com.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,9 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
     private NoticeVoteMapper noticeVoteMapper;
 
     @Override
-    public int createNotice(Notice notice,Long voteID) {
+    public int createNotice(Notice notice, Long voteID) {
         notice.setAno("");
+        notice.setApproved(0);
         noticeMapper.insert(notice);
         noticeMapper.update(
                 null,
@@ -47,32 +49,38 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
                 .noticeId(notice.getId())
                 .build();
         noticeTypeRelationMapper.insert(noticeTypeRelation);
-        List<Owner> ownerList = ownerMapper.selectList(new QueryWrapper<>());
-        List<NoticeOwner> noticeOwnerList = new ArrayList<>();
-        for (Owner owner : ownerList) {
-            NoticeOwner noticeOwner = NoticeOwner.builder()
-                    .noticeId(notice.getId())
-                    .ownerId(owner.getId())
-                    .status(0)
-                    .build();
-            noticeOwnerList.add(noticeOwner);
-        }
-        if (noticeOwnerList.size() > 0) {
-            noticeOwnerMapper.addList(noticeOwnerList, new Date());
-        }
-        if (voteID != null){
+
+        if (voteID != null) {
             NoticeVote noticeVote = NoticeVote.builder()
                     .noticeId(notice.getId())
                     .voteId(voteID)
                     .build();
             noticeVoteMapper.insert(noticeVote);
         }
+        if (notice.getPicUrl() != null){
+            FileUtils.moveToDocument(notice.getPicUrl());
+        }
         return 1;
     }
 
     @Override
     public int editNotice(Notice notice) {
+        if (notice.getApproved() != null) {
+            notice.setApproved(null);
+        }
+        if (notice.getPublishTime() != null){
+            notice.setPublishTime(null);
+        }
+        if (notice.getOperateTime() != null){
+            notice.setOperateTime(null);
+        }
+        if (notice.getOperatorId() != null){
+            notice.setOperatorId(null);
+        }
         noticeMapper.updateById(notice);
+        if (notice.getPicUrl() != null) {
+            FileUtils.moveToDocument(notice.getPicUrl());
+        }
         if (notice.getId() != null) {
             noticeTypeRelationMapper.update(
                     null,
@@ -95,6 +103,28 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
                         .eq(NoticeOwner::getNoticeId, noticeID)
         );
         return noticeMapper.deleteById(noticeID);
+    }
+
+    @Override
+    public int approveNotice(Notice notice) {
+        //如果审核通过
+        if (notice.getApproved() == 1){
+            notice.setPublishTime(new Date());
+            List<Owner> ownerList = ownerMapper.selectList(new QueryWrapper<>());
+            List<NoticeOwner> noticeOwnerList = new ArrayList<>();
+            for (Owner owner : ownerList) {
+                NoticeOwner noticeOwner = NoticeOwner.builder()
+                        .noticeId(notice.getId())
+                        .ownerId(owner.getId())
+                        .status(0)
+                        .build();
+                noticeOwnerList.add(noticeOwner);
+            }
+            if (noticeOwnerList.size() > 0) {
+                noticeOwnerMapper.addList(noticeOwnerList, new Date());
+            }
+        }
+        return noticeMapper.updateById(notice);
     }
 
     public String generateAno(Long ID) {
@@ -121,6 +151,8 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
         return true;
     }
 }
+
+
 
 
 

@@ -1,20 +1,24 @@
 package com.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+
+import java.io.Serializable;
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
+@ApiModel(value = "com-domain-Notice")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "notice")
-public class Notice {
+public class Notice implements Serializable {
     public static final String COL_DELETE = "delete";
     public static final String COL_TYPE = "type";
     @TableId(value = "id", type = IdType.AUTO)
@@ -38,17 +42,50 @@ public class Notice {
     @TableField(value = "content")
     private String content;
 
+    /**
+     * 图片url
+     */
+    @TableField(value = "pic_url")
+    private String picUrl;
+
+    /**
+     * 创建人id
+     */
+    @TableField(value = "creator_id")
+    private Long creatorId;
+
+    /**
+     * 0:未审核， 1：审核通过 ，  2：审核不通过
+     */
+    @TableField(value = "approved")
+    private Integer approved;
+
+    /**
+     * 审核员id
+     */
+    @TableField(value = "operator_id")
+    private Long operatorId;
+
+    /**
+     * 审核时间
+     */
+    @TableField(value = "operate_time")
+    private Date operateTime;
+
+    /**
+     * 发布时间
+     */
+    @TableField(value = "publish_time")
+    private Date publishTime;
+
     @TableField(exist = false)
     private Long typeID;
 
     @TableField(exist = false)
     private String typeName;
 
-    /**
-     * 图片url
-     */
-    @TableField(value = "pic_url")
-    private String picUrl;
+    @TableField(exist = false)
+    private String creatorName;
 
     @TableField(value = "deleted")
     @TableLogic
@@ -62,6 +99,8 @@ public class Notice {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
     private Date gmtModified;
 
+    private static final long serialVersionUID = 1L;
+
     public static final String COL_ID = "id";
 
     public static final String COL_ANO = "ano";
@@ -71,6 +110,16 @@ public class Notice {
     public static final String COL_CONTENT = "content";
 
     public static final String COL_PIC_URL = "pic_url";
+
+    public static final String COL_CREATOR_ID = "creator_id";
+
+    public static final String COL_APPROVED = "approved";
+
+    public static final String COL_OPERATOR_ID = "operator_id";
+
+    public static final String COL_OPERATE_TIME = "operate_time";
+
+    public static final String COL_PUBLISH_TIME = "publish_time";
 
     public static final String COL_DELETED = "deleted";
 
