@@ -109,11 +109,32 @@ public class Vote implements Serializable {
     private Boolean endOrNot;
 
     /**
+     * 待投票
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "待投票")
+    private Boolean toBeVoted = false;
+
+    /**
+     * 已投票
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "已投票")
+    private Boolean haveVoted = false;
+
+    /**
      * 访问量
      */
     @TableField(value = "visit_num")
     @ApiModelProperty(value = "访问量")
     private Long visitNum;
+
+    /**
+     * 投票项目状态(1 正常 2 异议)
+     */
+    @TableField(value = "vote_status")
+    @ApiModelProperty(value = "投票项目状态(1 正常 2 异议)")
+    private Integer voteStatus;
 
     @TableField(value = "deleted")
     @ApiModelProperty(value = "")
@@ -160,6 +181,8 @@ public class Vote implements Serializable {
     public static final String COL_OWNER_NOTICED_IDS = "owner_noticed_ids";
 
     public static final String COL_VISIT_NUM = "visit_num";
+
+    public static final String COL_VOTE_STATUS = "vote_status";
 
     public static final String COL_DELETED = "deleted";
 

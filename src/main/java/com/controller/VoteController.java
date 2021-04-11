@@ -1,17 +1,23 @@
 package com.controller;
 
+import cn.hutool.core.util.CharUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.constant.CommonConstant;
+import com.constant.VoteConstant;
+import com.constant.VoteEvConstant;
+import com.constant.VoteLimitConstant;
 import com.domain.*;
 import com.pojo.VoteInfo;
 import com.pojo.VoteSituation;
 import com.service.*;
 import com.utils.ResultUtil;
+import com.utils.TimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,11 +36,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/vote")
 @Api(tags = "投票控制器")
 public class VoteController {
-
-    /**
-     * 审核通过状态
-     */
-    private final Integer PASS_STATUS = 1;
 
     @Value("${file.tmp}")
     private String tmpPath;
@@ -123,12 +124,25 @@ public class VoteController {
     }
 
     @ApiOperation("获取投票项目列表")
-    @GetMapping
-    public Result getVoteList() {
+    @GetMapping("/getVoteList/{userID}")
+    public Result getVoteList(@PathVariable("userID") Long userID) {
+        Owner currentUser = ownerService.getById(userID);
+        Boolean isOwner = true;
+        List<Long> userIDs = new ArrayList<>();
+        if (currentUser.getOid() != 0) {
+            isOwner = false;
+        }
+        List<Owner> relatives = ownerService.list(
+                Wrappers.lambdaQuery(Owner.class)
+                        .eq(Owner::getOid, isOwner ? userID : currentUser.getOid())
+        );
+        relatives.forEach(relative -> userIDs.add(relative.getId()));
+        userIDs.add(isOwner ? userID : currentUser.getOid());
+
         List<VoteEv> voteEvs = voteEvService.list(
                 Wrappers.lambdaQuery(VoteEv.class)
                         .select(VoteEv::getVoteId)
-                        .eq(VoteEv::getApplyStatus, PASS_STATUS)
+                        .eq(VoteEv::getApplyStatus, VoteEvConstant.PASS_STATUS)
         );
         List<Long> votePassIDs = new ArrayList<>();
         voteEvs.forEach(voteEv -> {
@@ -142,11 +156,23 @@ public class VoteController {
                 Wrappers.lambdaQuery(Vote.class)
                         .select(
                                 Vote::getId, Vote::getTitle, Vote::getWhetherDraft,
-                                Vote::getVisitNum, Vote::getStartTime, Vote::getEndTime
+                                Vote::getVisitNum, Vote::getStartTime, Vote::getEndTime,
+                                Vote::getVoteLimitId
                         )
                         .in(Vote::getId, votePassIDs)
+                        .eq(Vote::getVoteStatus, VoteConstant.VOTE_NORMAL_STATUS)
+                        .like(
+                                Vote::getOwnerNoticedIds,
+                                new StringBuffer(userID.toString())
+                                        .insert(0, CharUtil.COMMA)
+                                        .append(CharUtil.COMMA)
+                                        .toString()
+                        )
                         .orderByDesc(Vote::getGmtCreate)
         );
+        if (list.size() == 0) {
+            return ResultUtil.success(null);
+        }
         Date now = new Date();
         list.forEach(vote -> {
             Integer count = voteRecordsService.count(
@@ -156,6 +182,18 @@ public class VoteController {
             vote.setVoteNumbers(count);
 
             vote.setEndOrNot(vote.getEndTime().getTime() < now.getTime());
+
+            VoteRecords voteRecords = voteRecordsService.getOne(
+                    Wrappers.lambdaQuery(VoteRecords.class)
+                            .eq(VoteRecords::getVoteId, vote.getId())
+                            .in(VoteRecords::getOwnerId, userIDs)
+                            .like(vote.getVoteLimitId().equals(VoteLimitConstant.VOTE_ONCE_PER_DAY), VoteRecords::getGmtCreate, TimeUtil.formatTime("yyyy-MM-dd"))
+            );
+            if (ObjectUtils.isNotEmpty(voteRecords)) {
+                vote.setHaveVoted(true);
+            } else {
+                vote.setToBeVoted(true);
+            }
         });
         return ResultUtil.success(list);
     }
@@ -373,5 +411,32 @@ public class VoteController {
     public Result whetherReplaceByRelatives(@PathVariable("voteID") @ApiParam("投票项目id") Long voteID) {
         Vote vote = voteService.getById(voteID);
         return ResultUtil.success(vote.getWhetherReplaceByRelatives());
+    }
+
+    @ApiOperation("获取所有已经结束的项目")
+    @GetMapping("/getAllFinished")
+    public Result getAllFinished() {
+        List<VoteEv> voteEvs = voteEvService.list(
+                Wrappers.lambdaQuery(VoteEv.class)
+                        .select(VoteEv::getVoteId)
+                        .eq(VoteEv::getApplyStatus, VoteEvConstant.PASS_STATUS)
+        );
+        List<Long> votePassIDs = new ArrayList<>();
+        voteEvs.forEach(voteEv -> {
+            votePassIDs.add(voteEv.getVoteId());
+        });
+        if (votePassIDs.size() == 0) {
+            return ResultUtil.success(null);
+        }
+
+        Date now = new Date();
+        List<Vote> list = voteService.list(
+                Wrappers.lambdaQuery(Vote.class)
+                        .in(Vote::getId, votePassIDs)
+                        .eq(Vote::getVoteStatus, VoteConstant.VOTE_NORMAL_STATUS)
+                        .lt(Vote::getEndTime, now)
+                        .orderByDesc(Vote::getGmtCreate)
+        );
+        return ResultUtil.success(list);
     }
 }

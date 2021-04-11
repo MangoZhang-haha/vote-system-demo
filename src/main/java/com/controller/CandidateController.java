@@ -3,6 +3,7 @@ package com.controller;
 import cn.hutool.core.util.CharUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.constant.CommonConstant;
+import com.constant.VoteLimitConstant;
 import com.domain.*;
 import com.pojo.CandidateInfo;
 import com.pojo.VoteTotalInfo;
@@ -27,16 +28,6 @@ import java.util.*;
 @RequestMapping("/candidate")
 @Api(tags = "候选人控制器")
 public class CandidateController {
-
-    /**
-     * 只能投票一次
-     */
-    private static final Long ONLY_VOTE_ONCE = 1L;
-
-    /**
-     * 每天可投一次
-     */
-    private static final Long VOTE_ONCE_PER_DAY = 2L;
 
     @Autowired
     private VoteService voteService;
@@ -137,15 +128,15 @@ public class CandidateController {
         relatives.forEach(relative -> userIDs.add(relative.getId()));
         userIDs.add(isOwner ? userID : currentUser.getOid());
 
-        if (vote.getVoteLimitId().equals(ONLY_VOTE_ONCE) || vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY)) {
+        if (vote.getVoteLimitId().equals(VoteLimitConstant.ONLY_VOTE_ONCE) || vote.getVoteLimitId().equals(VoteLimitConstant.VOTE_ONCE_PER_DAY)) {
             VoteRecords voteRecords = voteRecordsService.getOne(
                     Wrappers.lambdaQuery(VoteRecords.class)
                             .eq(VoteRecords::getVoteId, voteCandidate.getVoteId())
                             .in(VoteRecords::getOwnerId, userIDs)
-                            .like(vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY), VoteRecords::getGmtCreate, TimeUtil.formatTime("yyyy-MM-dd"))
+                            .like(vote.getVoteLimitId().equals(VoteLimitConstant.VOTE_ONCE_PER_DAY), VoteRecords::getGmtCreate, TimeUtil.formatTime("yyyy-MM-dd"))
             );
             if (ObjectUtils.isNotEmpty(voteRecords)) {
-                String today = vote.getVoteLimitId().equals(VOTE_ONCE_PER_DAY) ? "今天" : "";
+                String today = vote.getVoteLimitId().equals(VoteLimitConstant.VOTE_ONCE_PER_DAY) ? "今天" : "";
                 if (voteRecords.getOwnerId().equals(userID)) {
                     return ResultUtil.error("您" + today + "已经投过票了,请勿重复投票");
                 } else {

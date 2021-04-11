@@ -1,5 +1,6 @@
 package com.service.impl;
 
+import cn.hutool.core.util.CharUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -45,7 +46,13 @@ public class VoteServiceImpl extends ServiceImpl<VoteMapper, Vote> implements Vo
             JSONObject communityInfo = JSONObject.parseObject(community.toString());
             calCommunity(communityInfo, ownerIDs);
         });
-        return StringUtils.join(ownerIDs, ",");
+        return ownerIDs.size() == 0 ?
+                null
+                :
+                new StringBuffer(StringUtils.join(ownerIDs, CharUtil.COMMA))
+                        .insert(0, CharUtil.COMMA)
+                        .append(CharUtil.COMMA)
+                        .toString();
     }
 
     @Override
