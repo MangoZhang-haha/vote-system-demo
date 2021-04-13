@@ -43,20 +43,11 @@ public class OSSClientUtil {
     @Value("${alibaba.face.endpoint}")
     public String endpoint;
 
-    private static OSSClient ossClient;
-
-    /**
-     * @desc 静态初始化ossClient
-     **/
-    @PostConstruct
-    public void init() {
-        ossClient = new OSSClient(endpoint, accessKeyID, accessKeySecret);
-    }
-
     /**
      * 设置bucket公共读
      */
     public void setBucketPublic() {
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyID, accessKeySecret);
         ossClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
     }
 
@@ -67,6 +58,7 @@ public class OSSClientUtil {
      * @return
      */
     public String uploadWebFile(String fileUrl, String fileName) {
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyID, accessKeySecret);
         String key = fileName;
         InputStream is = null;
         try {
@@ -101,6 +93,7 @@ public class OSSClientUtil {
      * 罗列出oss中单个bucket中的文件（默认是100个）
      */
     public List<String> listFiles(String bucketName) {
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyID, accessKeySecret);
         List<String> result = new ArrayList<>();
         ObjectListing objectListing = ossClient.listObjects(bucketName);
         List<OSSObjectSummary> objectSummaries = objectListing.getObjectSummaries();
@@ -117,6 +110,7 @@ public class OSSClientUtil {
      * @return
      */
     public List<String> deleteFiles(String bucketName, List<String> keys) {
+        OSSClient ossClient = new OSSClient(endpoint, accessKeyID, accessKeySecret);
         DeleteObjectsResult deleteObjectsResult = ossClient.deleteObjects(new DeleteObjectsRequest(bucketName).withKeys(keys));
         List<String> deletedObjects = deleteObjectsResult.getDeletedObjects();
 
