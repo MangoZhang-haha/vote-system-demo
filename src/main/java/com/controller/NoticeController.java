@@ -57,7 +57,6 @@ public class NoticeController {
             IPage<NoticeTypeRelation> iPage = noticeTypeRelationService.page(new Page<>(page,size),
                     Wrappers.<NoticeTypeRelation>lambdaQuery()
                             .eq(NoticeTypeRelation::getNoticeTypeId,typeID)
-                            .orderByDesc(NoticeTypeRelation::getGmtCreate)
             );
             List<NoticeTypeRelation> records = iPage.getRecords();
             List<Long> noticeIDList = new ArrayList<>();
@@ -73,6 +72,7 @@ public class NoticeController {
                 QueryWrapper<Notice> wrapper = new QueryWrapper<>();
                 WrapperUtil.like(wrapper,notice,new String[]{"ano","title","content","approved"});
                 wrapper.in("id",noticeIDList);
+                wrapper.orderByDesc("gmt_create");
                 List<Notice> noticeList = noticeService.list(wrapper);
                 for (Notice notice1 : noticeList){
                     NoticeTypeRelation relation = noticeTypeRelationService.getOne(
@@ -91,6 +91,7 @@ public class NoticeController {
         }
         QueryWrapper<Notice> wrapper = new QueryWrapper<>();
         WrapperUtil.like(wrapper, notice, new String[]{"ano", "title","content","approved"});
+        wrapper.orderByDesc("gmt_create");
         Page<Notice> iPage = noticeService.page(new Page<>(page, size), wrapper, sorts);
         List<Notice> noticeList = iPage.getRecords();
         for (Notice notice1 : noticeList){
