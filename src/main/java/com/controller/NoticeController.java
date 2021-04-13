@@ -57,6 +57,7 @@ public class NoticeController {
             IPage<NoticeTypeRelation> iPage = noticeTypeRelationService.page(new Page<>(page,size),
                     Wrappers.<NoticeTypeRelation>lambdaQuery()
                             .eq(NoticeTypeRelation::getNoticeTypeId,typeID)
+                            .orderByDesc(NoticeTypeRelation::getGmtCreate)
             );
             List<NoticeTypeRelation> records = iPage.getRecords();
             List<Long> noticeIDList = new ArrayList<>();

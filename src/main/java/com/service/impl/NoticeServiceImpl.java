@@ -58,7 +58,7 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
             noticeVoteMapper.insert(noticeVote);
         }
         if (notice.getPicUrl() != null){
-            FileUtils.moveToDocument(notice.getPicUrl());
+            notice.setPicUrl(FileUtils.moveToDocument(notice.getPicUrl()));
         }
         return 1;
     }
@@ -79,7 +79,7 @@ public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> imp
         }
         noticeMapper.updateById(notice);
         if (notice.getPicUrl() != null) {
-            FileUtils.moveToDocument(notice.getPicUrl());
+            notice.setPicUrl(FileUtils.moveToDocument(notice.getPicUrl()));
         }
         if (notice.getId() != null) {
             noticeTypeRelationMapper.update(
